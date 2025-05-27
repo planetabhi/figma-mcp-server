@@ -1,0 +1,19 @@
+export const toolPaths = [
+  'figma/figma-api/get-all-webhooks-for-team.js',
+  'figma/figma-api/add-webhook.js',
+  'figma/figma-api/delete-webhook.js',
+  'figma/figma-api/get-library-analytics.js',
+  'figma/figma-api/get-dev-resources.js',
+  'figma/figma-api/get-design.js',
+  'figma/figma-api/get-actions-analytics.js',
+  'figma/figma-api/get-image-node.js',
+  'figma/figma-api/get-team-projects.js',
+  'figma/figma-api/get-project-files.js',
+  'figma/figma-api/get-file-comments.js',
+  'figma/figma-api/post-dev-resource.js',
+  'figma/figma-api/get-images.js',
+  'figma/figma-api/create-variable-collection.js',
+  'figma/figma-api/get-design-node.js',
+  'figma/figma-api/post-a-new-comment.js',
+  'figma/figma-api/reply-to-comment.js'
+];
