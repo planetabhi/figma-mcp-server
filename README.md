@@ -1,69 +1,42 @@
 # Figma MCP Server
+MCP server for Figma
 
-### 📥 Installation & Setup
+### Set tool environment variables
+In the `.env` file, set the `FIGMA_API_KEY` to your Figma API key.
 
-**1. Install dependencies**
+```
+FIGMA_API_KEY=
+```
 
-Run from your project's root directory:
+### Install
+Install the server
 
 ```sh
-npm install
+git clone https://github.com/planetabhi/figma-mcp-server.git
+cd figma-mcp-server
+pnpm i
 ```
 
-### 🔐 Set tool environment variables
-
-In the `.env` file, you'll see environment variable placeholders, one for each workspace that the selected tools are from. For example, if you selected requests from 2 workspaces, e.g. Acme and Widgets, you'll see two placeholders:
-
-```
-ACME_API_KEY=
-WIDGETS_API_KEY=
-```
-
-Update the values with actual API keys for each API. These environment variables are used inside of the generated tools to set the API key for each request. You can inspect a file in the `tools` directory to see how it works.
-
-```javascript
-// environment variables are used inside of each tool file
-const apiKey = process.env.ACME_API_KEY;
-```
-
-**Caveat:** This may not be correct for every API. The generation logic is relatively simple - for each workspace, we create an environment variable with the same name as the workspace slug, and then use that environment variable in each tool file that belongs to that workspace. If this isn't the right behavior for your chosen API, no problem! You can manually update anything in the `.env` file or tool files to accurately reflect the API's method of authentication.
-
-### 🛠️ List Available Tools
-
-List descriptions and parameters from all generated tools with:
+### List Tools
+List descriptions and parameters from all available tools
 
 ```sh
-node index.js tools
+pnpm list-tools
 ```
 
-Example:
+## Run the MCP Server
 
-```
-Available Tools:
+The MCP Server (`mcpServer.js`) exposes your automated API tools to MCP-compatible clients.
 
-Workspace: acme-workspace
-  Collection: useful-api
-    list_all_customers
-      Description: Retrieve a list of useful things.
-      Parameters:
-        - magic: The required magic power
-        - limit: Number of results returned
-        [...additional parameters...]
-```
+### Run with Postman
 
-## 🌐 Running the MCP Server
+Postman desktop app is the easiest way to run and test MCP servers.
 
-The MCP Server (`mcpServer.js`) exposes your automated API tools to MCP-compatible clients, such as Claude Desktop or the Postman Desktop Application.
-
-### A) 🖥️ Run with Postman
-
-The Postman Desktop Application is the easiest way to run and test MCP servers.
-
-Step 1: Download the latest Postman Desktop Application from [https://www.postman.com/downloads/](https://www.postman.com/downloads/).
+Step 1: Download the latest Postman app from [https://www.postman.com/downloads/](https://www.postman.com/downloads/).
 
 Step 2: Read out the documentation article [here](https://learning.postman.com/docs/postman-ai-agent-builder/mcp-requests/overview/) for the next steps.
 
-### B) 👩‍💻 Run with Claude Desktop
+### Run with Claude Desktop
 
 To integrate with Claude Desktop:
 
@@ -96,7 +69,7 @@ Restart Claude Desktop to activate this change.
 
 ### Additional Options
 
-#### 🐳 Docker Deployment (Production)
+#### Docker Deployment (Production)
 
 For production deployments, you can use Docker:
 
@@ -123,7 +96,7 @@ Add Docker server configuration to Claude Desktop (Settings → Developers → E
 
 > Add your environment variables (API keys, etc.) inside the `.env` file.
 
-#### 🌐 Server-Sent Events (SSE)
+#### Server-Sent Events (SSE)
 
 To run the server with Server-Sent Events (SSE) support, use the `--sse` flag:
 
@@ -131,7 +104,7 @@ To run the server with Server-Sent Events (SSE) support, use the `--sse` flag:
 node mcpServer.js --sse
 ```
 
-## 🐳 Dockerfile (Included)
+## Dockerfile (Included)
 
 The project comes bundled with the following minimal Docker setup:
 
@@ -146,18 +119,3 @@ COPY . .
 
 ENTRYPOINT ["node", "mcpServer.js"]
 ```
-
-## ➕ Adding New Tools
-
-Extend your agent with more tools easily:
-
-1. Visit [Postman Agent Generator](https://postman.com/explore/agent-generator).
-2. Pick new API request(s), generate a new agent, and download it.
-3. Copy new generated tool(s) into your existing project's `tools/` folder.
-4. Update your `tools/paths.js` file to include new tool references.
-
-## 💬 Questions & Support
-
-Visit the [Postman Agent Generator](https://postman.com/explore/agent-generator) page for updates and new capabilities.
-
-Visit the [Postman Community](https://community.postman.com/) to share what you've built, ask questions and get help.
