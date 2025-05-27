@@ -24,7 +24,12 @@
   ],
   "author": "@planetabhi",
   "license": "MIT",
-  "files": [
-    "README.md"
-  ]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/planetabhi/figma-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/planetabhi/figma-mcp-server/issues"
+  },
+  "homepage": "https://github.com/planetabhi/figma-mcp-server#readme"
 }
