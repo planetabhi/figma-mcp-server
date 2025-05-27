@@ -17,8 +17,8 @@ cd figma-mcp-server
 pnpm i
 ```
 
-### List Tools
-List descriptions and parameters from all available tools
+### List Figma Tools
+List descriptions and parameters from all available Figma tools
 
 ```sh
 pnpm list-tools
@@ -26,7 +26,7 @@ pnpm list-tools
 
 ## Run the MCP Server
 
-The MCP Server (`mcpServer.js`) exposes your automated API tools to MCP-compatible clients.
+The MCP Server (`mcpServer.js`) exposes your Figma API tools to MCP-compatible clients.
 
 ### Run with Postman
 
