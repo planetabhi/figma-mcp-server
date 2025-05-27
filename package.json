@@ -1,20 +1,30 @@
 {
   "name": "figma-mcp-server",
-  "version": "1.0.0",
+  "version": "0.0.0-alpha.1",
+  "description": "MCP server for Figma",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "list-tools": "node index.js tools"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/planetabhi/figma-mcp-server.git"
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "commander": "^14.0.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/planetabhi/figma-mcp-server/issues"
+  "engines": {
+    "node": ">=16.0.0"
   },
-  "homepage": "https://github.com/planetabhi/figma-mcp-server#readme",
-  "description": ""
+  "keywords": [
+    "figma",
+    "mcp",
+    "model-context-protocol",
+    "server"
+  ],
+  "author": "@planetabhi",
+  "license": "MIT",
+  "files": [
+    "README.md"
+  ]
 }
