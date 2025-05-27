@@ -103,19 +103,3 @@ To run the server with Server-Sent Events (SSE) support, use the `--sse` flag:
 ```sh
 node mcpServer.js --sse
 ```
-
-## Dockerfile (Included)
-
-The project comes bundled with the following minimal Docker setup:
-
-```dockerfile
-FROM node:22.12-alpine AS builder
-
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
-
-COPY . .
-
-ENTRYPOINT ["node", "mcpServer.js"]
-```
