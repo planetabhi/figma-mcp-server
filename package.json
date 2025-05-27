@@ -1,0 +1,20 @@
+{
+  "name": "figma-mcp-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/planetabhi/figma-mcp-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/planetabhi/figma-mcp-server/issues"
+  },
+  "homepage": "https://github.com/planetabhi/figma-mcp-server#readme",
+  "description": ""
+}
