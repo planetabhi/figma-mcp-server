@@ -61,6 +61,9 @@ Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and 
 
 Restart Claude Desktop to activate this change.
 
+> Note: Some tools may be non-functional at the moment because of changes to the Figma API. Working on updating the endpoints in future releases.
+
+---
 
 ### Additional Options
 
