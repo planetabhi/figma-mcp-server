@@ -63,11 +63,12 @@ Or you can fork Postman [collection here](https://www.postman.com/doitagain/work
 
 2. Restart Claude Desktop to activate this change.
 
-Try it out:
-3. Open Claude Desktop, then click on the search and tools icon button and select your server name from the list.
-4. Enable the `get_design_node` tool from the tools list.
-5. Copy a design node link from a Figma file, then paste it in Claude Desktop.
-6. It will return the design node data and other information.
+#### Try it out:
+
+1. Open Claude Desktop, then click on the search and tools icon button and select your server name from the list.
+2. Enable the `get_design_node` tool from the tools list.
+3. Copy a design node link from a Figma file, then paste it in Claude Desktop.
+4. It will return the design node data and other information.
 
 > Note: Some tools may be non-functional at the moment because of changes to the Figma API. Working on updating the endpoints in future updates.
 
