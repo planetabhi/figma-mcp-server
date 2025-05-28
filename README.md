@@ -44,9 +44,11 @@ Postman desktop app is the easiest way to [run and test MCP servers](https://lea
 STDIO <absolute_path_to_node> <absolute_path_to_mcpServer.js>
 ```
 
+Or you can fork Postman [collection here](https://www.postman.com/doitagain/workspace/figma/collection/68369062465421c338809955?action=share&creator=17652550).
+
 ### Run with Claude Desktop
 
-Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and add your server:
+1. Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and add your server:
 
 ```json
 {
@@ -59,9 +61,15 @@ Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and 
 }
 ```
 
-Restart Claude Desktop to activate this change.
+2. Restart Claude Desktop to activate this change.
 
-> Note: Some tools may be non-functional at the moment because of changes to the Figma API. Working on updating the endpoints in future releases.
+Try it out:
+3. Open Claude Desktop, then click on the search and tools icon button and select your server name from the list.
+4. Enable the `get_design_node` tool from the tools list.
+5. Copy a design node link from a Figma file, then paste it in Claude Desktop.
+6. It will return the design node data and other information.
+
+> Note: Some tools may be non-functional at the moment because of changes to the Figma API. Working on updating the endpoints in future updates.
 
 ---
 
