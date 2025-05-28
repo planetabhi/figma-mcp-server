@@ -1,20 +1,20 @@
 # Figma MCP Server
 MCP server for Figma
 
-### Set tool environment variables
-In the `.env` file, set the `FIGMA_API_KEY` to your Figma API key.
-
-```
-FIGMA_API_KEY=
-```
-
-### Install
+## Install
 Install the server
 
 ```sh
 git clone https://github.com/planetabhi/figma-mcp-server.git
 cd figma-mcp-server
 pnpm i
+```
+
+### Set tool environment variables
+In the `.env` file, set the `FIGMA_API_KEY` to your Figma API key.
+
+```
+FIGMA_API_KEY=
 ```
 
 ### List Figma Tools
@@ -26,33 +26,27 @@ pnpm list-tools
 
 ## Run the MCP Server
 
-The MCP Server (`mcpServer.js`) exposes your Figma API tools to MCP-compatible clients.
+MCP Server `mcpServer.js` exposes your Figma API tools to MCP-compatible clients.
+
+1. Find node path: `which node`
+2. Find mcpServer.js path: `realpath mcpServer.js`
 
 ### Run with Postman
 
-Postman desktop app is the easiest way to run and test MCP servers.
+Postman desktop app is the easiest way to [run and test MCP servers](https://learning.postman.com/docs/postman-ai-agent-builder/mcp-requests/overview/).
 
-Step 1: Download the latest Postman app from [https://www.postman.com/downloads/](https://www.postman.com/downloads/).
+1. Choose an existing workspace or create a new one.
+2. Select New > MCP icon MCP. Postman opens a new MCP request in a new tab.
+3. Select the server's communication method STDIO.
+4. Enter the server's command and arguments.
 
-Step 2: Read out the documentation article [here](https://learning.postman.com/docs/postman-ai-agent-builder/mcp-requests/overview/) for the next steps.
+```sh
+STDIO <absolute_path_to_node> <absolute_path_to_mcpServer.js>
+```
 
 ### Run with Claude Desktop
 
-To integrate with Claude Desktop:
-
-1. Find node path:
-
-```sh
-which node
-```
-
-2. Find `mcpServer.js` path:
-
-```sh
-realpath mcpServer.js
-```
-
-3. Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and add your server:
+Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and add your server:
 
 ```json
 {
@@ -66,6 +60,7 @@ realpath mcpServer.js
 ```
 
 Restart Claude Desktop to activate this change.
+
 
 ### Additional Options
 
