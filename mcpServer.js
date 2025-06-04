@@ -19,9 +19,13 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-const SERVER_NAME = "generated-mcp-server";
+// Server configuration
+const SERVER_NAME = process.env.SERVER_NAME || "figma-mcp-server";
+const SERVER_VERSION = process.env.SERVER_VERSION || "0.1.2";
+const DEFAULT_PORT = 3001;
 
 async function transformTools(tools) {
   return tools
@@ -94,7 +98,7 @@ async function run() {
       const server = new Server(
         {
           name: SERVER_NAME,
-          version: "0.1.0",
+          version: SERVER_VERSION,
         },
         {
           capabilities: {
@@ -130,16 +134,18 @@ async function run() {
       }
     });
 
-    const port = process.env.PORT || 3001;
+    const port = process.env.PORT || DEFAULT_PORT;
     app.listen(port, () => {
       console.log(`[SSE Server] running on port ${port}`);
+      console.log(`[Server] Name: ${SERVER_NAME}`);
+      console.log(`[Server] Version: ${SERVER_VERSION}`);
     });
   } else {
     // stdio mode: single server instance
     const server = new Server(
       {
         name: SERVER_NAME,
-        version: "0.1.0",
+        version: SERVER_VERSION,
       },
       {
         capabilities: {

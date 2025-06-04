@@ -25,7 +25,7 @@ startCommand:
         type: string
         title: "Server Version"
         description: "Version of the MCP server"
-        default: "0.1.0"
+        default: "0.1.2"
 
 connection:
   type: sse
