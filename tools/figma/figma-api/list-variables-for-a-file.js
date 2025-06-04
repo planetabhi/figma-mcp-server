@@ -1,16 +1,16 @@
 /**
- * Function to get projects associated with a specific team in Figma.
+ * Function to list variables for a specific Figma file.
  *
  * @param {Object} args - Arguments for the request.
- * @param {string} args.team_id - The ID of the team whose projects are to be retrieved.
- * @returns {Promise<Object>} - The list of projects associated with the team.
+ * @param {string} args.file_key - The key of the Figma file for which to list variables.
+ * @returns {Promise<Object>} - The response containing the variable collections and variables defined in the specified Figma file.
  */
-const executeFunction = async ({ team_id }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+const executeFunction = async ({ file_key }) => {
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
     // Construct the URL for the request
-    const url = `${baseUrl}/teams/${team_id}/projects`;
+    const url = `${baseUrl}/v1/files/${file_key}/variables`;
 
     // Set up headers for the request
     const headers = {
@@ -33,13 +33,13 @@ const executeFunction = async ({ team_id }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving team projects:', error);
-    return { error: 'An error occurred while retrieving team projects.' };
+    console.error('Error listing variables for the file:', error);
+    return { error: 'An error occurred while listing variables for the file.' };
   }
 };
 
 /**
- * Tool configuration for getting team projects in Figma.
+ * Tool configuration for listing variables for a Figma file.
  * @type {Object}
  */
 const apiTool = {
@@ -47,17 +47,17 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_team_projects',
-      description: 'Retrieve projects associated with a specific team in Figma.',
+      name: 'list_file_variables',
+      description: 'List variables for a specific Figma file.',
       parameters: {
         type: 'object',
         properties: {
-          team_id: {
+          file_key: {
             type: 'string',
-            description: 'The ID of the team whose projects are to be retrieved.'
+            description: 'The key of the Figma file for which to list variables.'
           }
         },
-        required: ['team_id']
+        required: ['file_key']
       }
     }
   }

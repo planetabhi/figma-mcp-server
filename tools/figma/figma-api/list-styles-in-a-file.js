@@ -1,16 +1,17 @@
 /**
- * Function to get project files from Figma.
+ * Function to list styles in a specific Figma file.
  *
  * @param {Object} args - Arguments for the request.
- * @param {string} args.project_id - The ID of the project to retrieve files from.
- * @returns {Promise<Object>} - The list of files associated with the specified project.
+ * @param {string} args.file_key - The key of the Figma file to retrieve styles from.
+ * @returns {Promise<Object>} - The response containing styles from the specified Figma file.
  */
-const executeFunction = async ({ project_id }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+const executeFunction = async ({ file_key }) => {
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
+
   try {
     // Construct the URL for the request
-    const url = `${baseUrl}/projects/${project_id}/files`;
+    const url = `${baseUrl}/v1/files/${file_key}/styles`;
 
     // Set up headers for the request
     const headers = {
@@ -33,13 +34,13 @@ const executeFunction = async ({ project_id }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving project files:', error);
-    return { error: 'An error occurred while retrieving project files.' };
+    console.error('Error listing styles in the Figma file:', error);
+    return { error: 'An error occurred while listing styles in the Figma file.' };
   }
 };
 
 /**
- * Tool configuration for getting project files from Figma.
+ * Tool configuration for listing styles in a Figma file.
  * @type {Object}
  */
 const apiTool = {
@@ -47,17 +48,17 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_project_files',
-      description: 'Retrieve files associated with a specific project in Figma.',
+      name: 'list_styles_in_file',
+      description: 'List styles in a specific Figma file.',
       parameters: {
         type: 'object',
         properties: {
-          project_id: {
+          file_key: {
             type: 'string',
-            description: 'The ID of the project to retrieve files from.'
+            description: 'The key of the Figma file to retrieve styles from.'
           }
         },
-        required: ['project_id']
+        required: ['file_key']
       }
     }
   }

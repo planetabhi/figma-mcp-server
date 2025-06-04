@@ -1,18 +1,20 @@
 /**
- * Function to retrieve information about specific nodes in a Figma file.
+ * Function to get image fills from a Figma file.
  *
- * @param {Object} args - Arguments for the node retrieval.
+ * @param {Object} args - Arguments for the image fills request.
  * @param {string} args.file_key - The key of the Figma file.
- * @param {string} args.node_id - The IDs of the nodes to retrieve, comma-separated.
- * @returns {Promise<Object>} - The result of the node retrieval.
+ * @param {string} [args.node_id] - The ID of the specific node to retrieve images for (optional).
+ * @returns {Promise<Object>} - The URLs for rendered images of specific nodes.
  */
 const executeFunction = async ({ file_key, node_id }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
-
   try {
-    // Construct the URL for the API request
-    const url = `${baseUrl}/files/${file_key}/nodes?ids=${node_id}`;
+    // Construct the URL with the file key and optional node ID
+    const url = new URL(`${baseUrl}/v1/images/${file_key}`);
+    if (node_id) {
+      url.searchParams.append('ids', node_id);
+    }
 
     // Set up headers for the request
     const headers = {
@@ -20,7 +22,7 @@ const executeFunction = async ({ file_key, node_id }) => {
     };
 
     // Perform the fetch request
-    const response = await fetch(url, {
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers
     });
@@ -35,13 +37,13 @@ const executeFunction = async ({ file_key, node_id }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving node information:', error);
-    return { error: 'An error occurred while retrieving node information.' };
+    console.error('Error getting image fills:', error);
+    return { error: 'An error occurred while getting image fills.' };
   }
 };
 
 /**
- * Tool configuration for retrieving node information from a Figma file.
+ * Tool configuration for getting image fills from a Figma file.
  * @type {Object}
  */
 const apiTool = {
@@ -49,8 +51,8 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_design_node',
-      description: 'Retrieve information about specific nodes in a Figma file.',
+      name: 'get_image_fills',
+      description: 'Get image fills from a Figma file.',
       parameters: {
         type: 'object',
         properties: {
@@ -60,10 +62,10 @@ const apiTool = {
           },
           node_id: {
             type: 'string',
-            description: 'The IDs of the nodes to retrieve, comma-separated.'
+            description: 'The ID of the specific node to retrieve images for.'
           }
         },
-        required: ['file_key', 'node_id']
+        required: ['file_key']
       }
     }
   }

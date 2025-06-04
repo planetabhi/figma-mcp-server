@@ -1,16 +1,16 @@
 /**
- * Function to get library analytics from Figma.
+ * Function to get library action analytics from Figma.
  *
- * @param {Object} args - Arguments for the library analytics request.
- * @param {string} args.library_file_key - The unique identifier of the library file.
- * @returns {Promise<Object>} - The result of the library analytics request.
+ * @param {Object} args - Arguments for the analytics request.
+ * @param {string} args.library_file_key - The key of the library file for which to retrieve action analytics.
+ * @returns {Promise<Object>} - The result of the library action analytics request.
  */
 const executeFunction = async ({ library_file_key }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
     // Construct the URL for the request
-    const url = `${baseUrl}/analytics/libraries/${library_file_key}/usages`;
+    const url = `${baseUrl}/v1/analytics/libraries/${library_file_key}/actions`;
 
     // Set up headers for the request
     const headers = {
@@ -33,13 +33,13 @@ const executeFunction = async ({ library_file_key }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error getting library analytics:', error);
-    return { error: 'An error occurred while retrieving library analytics.' };
+    console.error('Error retrieving library action analytics:', error);
+    return { error: 'An error occurred while retrieving library action analytics.' };
   }
 };
 
 /**
- * Tool configuration for getting library analytics from Figma.
+ * Tool configuration for getting library action analytics from Figma.
  * @type {Object}
  */
 const apiTool = {
@@ -47,14 +47,14 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_library_analytics',
-      description: 'Retrieve library analytics from Figma.',
+      name: 'get_library_action_analytics',
+      description: 'Retrieve action analytics for a specific published library file.',
       parameters: {
         type: 'object',
         properties: {
           library_file_key: {
             type: 'string',
-            description: 'The unique identifier of the library file.'
+            description: 'The key of the library file for which to retrieve action analytics.'
           }
         },
         required: ['library_file_key']

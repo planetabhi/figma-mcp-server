@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import dotenv from "dotenv";
 import express from "express";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -36,32 +37,7 @@ async function transformTools(tools) {
     .filter(Boolean);
 }
 
-async function run() {
-  const args = process.argv.slice(2);
-  const isSSE = args.includes("--sse");
-
-  const server = new Server(
-    {
-      name: SERVER_NAME,
-      version: "0.1.0",
-    },
-    {
-      capabilities: {
-        tools: {},
-      },
-    }
-  );
-
-  server.onerror = (error) => console.error("[Error]", error);
-
-  // Gracefully shutdown on SIGINT
-  process.on("SIGINT", async () => {
-    await server.close();
-    process.exit(0);
-  });
-
-  const tools = await discoverTools();
-
+async function setupServerHandlers(server, tools) {
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: await transformTools(tools),
   }));
@@ -69,15 +45,12 @@ async function run() {
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
     const tool = tools.find((t) => t.definition.function.name === toolName);
-
     if (!tool) {
       throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${toolName}`);
     }
-
     const args = request.params.arguments;
     const requiredParameters =
       tool.definition?.function?.parameters?.required || [];
-
     for (const requiredParameter of requiredParameters) {
       if (!(requiredParameter in args)) {
         throw new McpError(
@@ -86,7 +59,6 @@ async function run() {
         );
       }
     }
-
     try {
       const result = await tool.function(args);
       return {
@@ -105,17 +77,42 @@ async function run() {
       );
     }
   });
+}
+
+async function run() {
+  const args = process.argv.slice(2);
+  const isSSE = args.includes("--sse");
+  const tools = await discoverTools();
 
   if (isSSE) {
     const app = express();
     const transports = {};
+    const servers = {};
 
     app.get("/sse", async (_req, res) => {
+      // Create a new Server instance for each session
+      const server = new Server(
+        {
+          name: SERVER_NAME,
+          version: "0.1.0",
+        },
+        {
+          capabilities: {
+            tools: {},
+          },
+        }
+      );
+      server.onerror = (error) => console.error("[Error]", error);
+      await setupServerHandlers(server, tools);
+
       const transport = new SSEServerTransport("/messages", res);
       transports[transport.sessionId] = transport;
+      servers[transport.sessionId] = server;
 
-      res.on("close", () => {
+      res.on("close", async () => {
         delete transports[transport.sessionId];
+        await server.close();
+        delete servers[transport.sessionId];
       });
 
       await server.connect(transport);
@@ -124,11 +121,12 @@ async function run() {
     app.post("/messages", async (req, res) => {
       const sessionId = req.query.sessionId;
       const transport = transports[sessionId];
+      const server = servers[sessionId];
 
-      if (transport) {
+      if (transport && server) {
         await transport.handlePostMessage(req, res);
       } else {
-        res.status(400).send("No transport found for sessionId");
+        res.status(400).send("No transport/server found for sessionId");
       }
     });
 
@@ -137,6 +135,26 @@ async function run() {
       console.log(`[SSE Server] running on port ${port}`);
     });
   } else {
+    // stdio mode: single server instance
+    const server = new Server(
+      {
+        name: SERVER_NAME,
+        version: "0.1.0",
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
+    server.onerror = (error) => console.error("[Error]", error);
+    await setupServerHandlers(server, tools);
+
+    process.on("SIGINT", async () => {
+      await server.close();
+      process.exit(0);
+    });
+
     const transport = new StdioServerTransport();
     await server.connect(transport);
   }

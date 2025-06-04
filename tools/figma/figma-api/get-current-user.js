@@ -1,21 +1,20 @@
 /**
- * Function to add a webhook in Figma.
+ * Function to get the current user information from Figma.
  *
- * @returns {Promise<Object>} - The result of the webhook addition.
+ * @returns {Promise<Object>} - The information about the user associated with the access token.
  */
 const executeFunction = async () => {
-  const webhookUrl = 'https://api.figma.com/v2/webhooks';
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
     // Set up headers for the request
     const headers = {
-      'X-Figma-Token': token,
-      'Content-Type': 'application/json'
+      'X-Figma-Token': token
     };
 
     // Perform the fetch request
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
+    const response = await fetch(`${baseUrl}/v1/me`, {
+      method: 'GET',
       headers
     });
 
@@ -29,13 +28,13 @@ const executeFunction = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error adding webhook:', error);
-    return { error: 'An error occurred while adding the webhook.' };
+    console.error('Error getting current user information:', error);
+    return { error: 'An error occurred while getting user information.' };
   }
 };
 
 /**
- * Tool configuration for adding a webhook in Figma.
+ * Tool configuration for getting the current user information from Figma.
  * @type {Object}
  */
 const apiTool = {
@@ -43,8 +42,8 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'add_webhook',
-      description: 'Add a webhook in Figma.',
+      name: 'get_current_user',
+      description: 'Get the current user information from Figma.',
       parameters: {
         type: 'object',
         properties: {},

@@ -1,18 +1,17 @@
 /**
- * Function to create a variable collection in Figma.
+ * Function to create variable collections for a Figma file.
  *
- * @param {Object} args - Arguments for creating the variable collection.
+ * @param {Object} args - Arguments for creating variable collections.
  * @param {string} args.file_key - The key of the Figma file where the variable collection will be created.
- * @param {string} args.name - The name of the new variable collection to be created.
+ * @param {string} args.name - The name of the variable collection to create.
  * @returns {Promise<Object>} - The result of the variable collection creation.
  */
 const executeFunction = async ({ file_key, name }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
-
   try {
     // Construct the URL for the request
-    const url = `${baseUrl}/files/${file_key}/variables`;
+    const url = `${baseUrl}/v1/files/${file_key}/variables`;
 
     // Set up headers for the request
     const headers = {
@@ -20,7 +19,7 @@ const executeFunction = async ({ file_key, name }) => {
       'Content-Type': 'application/json'
     };
 
-    // Create the request body
+    // Define the body of the request
     const body = JSON.stringify({
       variableCollections: [
         {
@@ -47,13 +46,13 @@ const executeFunction = async ({ file_key, name }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error creating variable collection:', error);
-    return { error: 'An error occurred while creating the variable collection.' };
+    console.error('Error creating variable collections:', error);
+    return { error: 'An error occurred while creating variable collections.' };
   }
 };
 
 /**
- * Tool configuration for creating a variable collection in Figma.
+ * Tool configuration for creating variable collections in a Figma file.
  * @type {Object}
  */
 const apiTool = {
@@ -61,8 +60,8 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'create_variable_collection',
-      description: 'Create a new variable collection in Figma.',
+      name: 'create_variable_collections',
+      description: 'Create variable collections for a Figma file.',
       parameters: {
         type: 'object',
         properties: {
@@ -72,7 +71,7 @@ const apiTool = {
           },
           name: {
             type: 'string',
-            description: 'The name of the new variable collection to be created.'
+            description: 'The name of the variable collection to create.'
           }
         },
         required: ['file_key', 'name']

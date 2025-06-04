@@ -1,19 +1,19 @@
 /**
- * Function to retrieve images from Figma using a specific file key and optional image IDs.
+ * Function to get specific nodes from a Figma file.
  *
- * @param {Object} args - Arguments for the image retrieval.
+ * @param {Object} args - Arguments for the request.
  * @param {string} args.file_key - The key of the Figma file.
- * @param {string} [args.ids] - A comma-separated list of specific image IDs to fetch.
- * @returns {Promise<Object>} - The result of the image retrieval.
+ * @param {string} [args.node_id] - The ID of the node to retrieve. If not provided, all nodes will be returned.
+ * @returns {Promise<Object>} - The result of the node retrieval.
  */
-const executeFunction = async ({ file_key, ids }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+const executeFunction = async ({ file_key, node_id }) => {
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
-    // Construct the URL with the file key and optional image IDs
-    const url = new URL(`${baseUrl}/images/${file_key}`);
-    if (ids) {
-      url.searchParams.append('ids', ids);
+    // Construct the URL
+    const url = new URL(`${baseUrl}/v1/files/${file_key}/nodes`);
+    if (node_id) {
+      url.searchParams.append('ids', node_id);
     }
 
     // Set up headers for the request
@@ -37,13 +37,13 @@ const executeFunction = async ({ file_key, ids }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving images from Figma:', error);
-    return { error: 'An error occurred while retrieving images from Figma.' };
+    console.error('Error getting file nodes:', error);
+    return { error: 'An error occurred while retrieving file nodes.' };
   }
 };
 
 /**
- * Tool configuration for retrieving images from Figma.
+ * Tool configuration for getting nodes from a Figma file.
  * @type {Object}
  */
 const apiTool = {
@@ -51,8 +51,8 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_image_node',
-      description: 'Retrieve images from Figma using a specific file key and optional image IDs.',
+      name: 'get_file_nodes',
+      description: 'Retrieve specific nodes from a Figma file.',
       parameters: {
         type: 'object',
         properties: {
@@ -60,9 +60,9 @@ const apiTool = {
             type: 'string',
             description: 'The key of the Figma file.'
           },
-          ids: {
+          node_id: {
             type: 'string',
-            description: 'A comma-separated list of specific image IDs to fetch.'
+            description: 'The ID of the node to retrieve.'
           }
         },
         required: ['file_key']
