@@ -1,16 +1,16 @@
 /**
- * Function to retrieve a Figma file by its unique file key.
+ * Function to list development resources for a specific Figma file.
  *
- * @param {Object} args - Arguments for the file retrieval.
- * @param {string} args.file_key - The unique identifier of the Figma file.
- * @returns {Promise<Object>} - The result of the file retrieval.
+ * @param {Object} args - Arguments for the request.
+ * @param {string} args.file_key - The key of the Figma file to retrieve development resources for.
+ * @returns {Promise<Object>} - The result of the development resources request.
  */
 const executeFunction = async ({ file_key }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
     // Construct the URL for the request
-    const url = `${baseUrl}/files/${file_key}`;
+    const url = `${baseUrl}/v1/files/${file_key}/dev_resources`;
 
     // Set up headers for the request
     const headers = {
@@ -26,20 +26,20 @@ const executeFunction = async ({ file_key }) => {
     // Check if the response was successful
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.err || 'An error occurred while retrieving the file.');
+      throw new Error(errorData);
     }
 
     // Parse and return the response data
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving Figma file:', error);
-    return { error: 'An error occurred while retrieving the Figma file.' };
+    console.error('Error listing development resources:', error);
+    return { error: 'An error occurred while listing development resources.' };
   }
 };
 
 /**
- * Tool configuration for retrieving a Figma file.
+ * Tool configuration for listing development resources for a Figma file.
  * @type {Object}
  */
 const apiTool = {
@@ -47,14 +47,14 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_design',
-      description: 'Retrieve a Figma file by its unique file key.',
+      name: 'list_dev_resources',
+      description: 'List development resources for a specific Figma file.',
       parameters: {
         type: 'object',
         properties: {
           file_key: {
             type: 'string',
-            description: 'The unique identifier of the Figma file.'
+            description: 'The key of the Figma file to retrieve development resources for.'
           }
         },
         required: ['file_key']

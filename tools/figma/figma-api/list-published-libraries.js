@@ -1,10 +1,10 @@
 /**
- * Function to get all webhooks for a team in Figma.
+ * Function to list published libraries in Figma.
  *
- * @returns {Promise<Object>} - The result of the webhook retrieval.
+ * @returns {Promise<Array>} - A promise that resolves to an array of published libraries.
  */
 const executeFunction = async () => {
-  const webhookUrl = 'https://api.figma.com/v2/webhooks';
+  const baseUrl = 'https://api.figma.com/v1/libraries/published';
   const token = process.env.FIGMA_API_KEY;
   try {
     // Set up headers for the request
@@ -13,14 +13,14 @@ const executeFunction = async () => {
     };
 
     // Perform the fetch request
-    const response = await fetch(webhookUrl, {
+    const response = await fetch(baseUrl, {
       method: 'GET',
       headers
     });
 
     // Check if the response was successful
     if (!response.ok) {
-      const errorData = await response.text();
+      const errorData = await response.json();
       throw new Error(errorData);
     }
 
@@ -28,13 +28,13 @@ const executeFunction = async () => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving webhooks:', error);
-    return { error: 'An error occurred while retrieving webhooks.' };
+    console.error('Error listing published libraries:', error);
+    return { error: 'An error occurred while listing published libraries.' };
   }
 };
 
 /**
- * Tool configuration for getting all webhooks for a team in Figma.
+ * Tool configuration for listing published libraries in Figma.
  * @type {Object}
  */
 const apiTool = {
@@ -42,8 +42,8 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_all_webhooks',
-      description: 'Retrieve all webhooks for a team in Figma.',
+      name: 'list_published_libraries',
+      description: 'Returns all published libraries available to the authenticated user.',
       parameters: {
         type: 'object',
         properties: {},

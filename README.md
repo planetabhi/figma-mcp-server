@@ -1,50 +1,43 @@
 # Figma MCP Server
-MCP server for Figma
+A simple MCP server for Figma
 
 ## Install
 Install the server
 
-```sh
+```bash
 git clone https://github.com/planetabhi/figma-mcp-server.git
 cd figma-mcp-server
 pnpm i
 ```
 
-### Set tool environment variables
-In the `.env` file, set the `FIGMA_API_KEY` to your Figma API key.
+### Set tool environment variable
+Create a `.env` file and set the `FIGMA_API_KEY` to your Figma API key.
 
-```
+```bash
 FIGMA_API_KEY=
 ```
 
-### List Figma Tools
-List descriptions and parameters from all available Figma tools
+> To generate a new personal access token, log in to your Figma account, then from the top-left menu, head to Settings, click on the security tab, find the Personal access tokens section, and click Generate new token to open the configuration modal where you can set the expiration and scopes before clicking Generate token.
 
-```sh
+### List All Tools
+List descriptions and parameters from all available tools
+
+```bash
 pnpm list-tools
 ```
 
 ## Run the MCP Server
 
-MCP Server `mcpServer.js` exposes your Figma API tools to MCP-compatible clients.
+### Find node and server path
 
-1. Find node path: `which node`
-2. Find mcpServer.js path: `realpath mcpServer.js`
+```bash
+# Find node path
+which node
 
-### Run with Postman
-
-Postman desktop app is the easiest way to [run and test MCP servers](https://learning.postman.com/docs/postman-ai-agent-builder/mcp-requests/overview/).
-
-1. Choose an existing workspace or create a new one.
-2. Select New > MCP icon MCP. Postman opens a new MCP request in a new tab.
-3. Select the server's communication method STDIO.
-4. Enter the server's command and arguments.
-
-```sh
-STDIO <absolute_path_to_node> <absolute_path_to_mcpServer.js>
+# Get the absolute path of the MCP server
+realpath mcpServer.js
 ```
 
-Or you can fork Postman [collection here](https://www.postman.com/doitagain/workspace/figma/collection/68369062465421c338809955?action=share&creator=17652550).
 
 ### Run with Claude Desktop
 
@@ -53,7 +46,7 @@ Or you can fork Postman [collection here](https://www.postman.com/doitagain/work
 ```json
 {
   "mcpServers": {
-    "<server_name>": {
+    "figma-mcp-server": {
       "command": "<absolute_path_to_node>",
       "args": ["<absolute_path_to_mcpServer.js>"]
     }
@@ -61,52 +54,59 @@ Or you can fork Postman [collection here](https://www.postman.com/doitagain/work
 }
 ```
 
-2. Restart Claude Desktop to activate this change.
+2. Restart Claude Desktop to activate config change.
 
-#### Try it out:
+> To try it out in Claude Desktop, first enable the `get_file_nodes` tool from the tools list. Copy a design node link from a Figma file, then paste it into Claude Desktop prompt. It will return the design node data and other information.
 
-1. Open Claude Desktop, then click on the search and tools icon button and select your server name from the list.
-2. Enable the `get_design_node` tool from the tools list.
-3. Copy a design node link from a Figma file, then paste it in Claude Desktop.
-4. It will return the design node data and other information.
+### Run in Postman
 
-> Note: Some tools may be non-functional at the moment because of changes to the Figma API. Working on updating the endpoints in future updates.
+1. Choose an existing workspace or create a new one.
+2. Select New > MCP. Postman opens a new MCP request in a new tab.
+3. Select the server's communication method STDIO.
+4. Enter the server's command and arguments.
+
+```bash
+# Create a new MCP request and add the server's command and arguments
+STDIO <absolute_path_to_node> <absolute_path_to_mcpServer.js>
+```
+
+> [Postman collection](https://www.postman.com/doitagain/workspace/figma/collection/68369062465421c338809955?action=share&creator=17652550).
 
 ---
 
-### Additional Options
+### Misc
 
-#### Docker Deployment (Production)
+#### Docker Deployment
 
 For production deployments, you can use Docker:
 
 **1. Build Docker image**
 
-```sh
-docker build -t <your_server_name> .
+```bash
+docker build -t figma-mcp-server .
 ```
 
-**2. Claude Desktop Integration**
+**2. Claude Desktop integration**
 
 Add Docker server configuration to Claude Desktop (Settings → Developers → Edit Config):
 
 ```json
 {
   "mcpServers": {
-    "<your_server_name>": {
+    "figma-mcp-server": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "--env-file=.env", "<your_server_name>"]
+      "args": ["run", "-i", "--rm", "--env-file=.env", "figma-mcp-server"]
     }
   }
 }
 ```
 
-> Add your environment variables (API keys, etc.) inside the `.env` file.
+> Add your environment variables inside the `.env` file.
 
 #### Server-Sent Events (SSE)
 
 To run the server with Server-Sent Events (SSE) support, use the `--sse` flag:
 
-```sh
+```bash
 node mcpServer.js --sse
 ```

@@ -1,17 +1,17 @@
 /**
- * Function to get comments for a specific Figma file.
+ * Function to list files in a specified Figma project.
  *
  * @param {Object} args - Arguments for the request.
- * @param {string} args.file_key - The key of the Figma file to retrieve comments from.
- * @returns {Promise<Object>} - The comments associated with the specified file.
+ * @param {string} args.project_id - The ID of the project to list files from.
+ * @returns {Promise<Object>} - The result of the files listing.
  */
-const executeFunction = async ({ file_key }) => {
-  const baseUrl = 'https://api.figma.com/v1';
+const executeFunction = async ({ project_id }) => {
+  const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
 
   try {
     // Construct the URL for the request
-    const url = `${baseUrl}/files/${file_key}/comments`;
+    const url = `${baseUrl}/v1/projects/${project_id}/files`;
 
     // Set up headers for the request
     const headers = {
@@ -34,13 +34,13 @@ const executeFunction = async ({ file_key }) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error getting file comments:', error);
-    return { error: 'An error occurred while retrieving file comments.' };
+    console.error('Error listing files in project:', error);
+    return { error: 'An error occurred while listing files in the project.' };
   }
 };
 
 /**
- * Tool configuration for getting comments from a Figma file.
+ * Tool configuration for listing files in a Figma project.
  * @type {Object}
  */
 const apiTool = {
@@ -48,17 +48,17 @@ const apiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'get_file_comments',
-      description: 'Retrieve comments associated with a specific Figma file.',
+      name: 'list_files_in_project',
+      description: 'List files in a specified Figma project.',
       parameters: {
         type: 'object',
         properties: {
-          file_key: {
+          project_id: {
             type: 'string',
-            description: 'The key of the Figma file to retrieve comments from.'
+            description: 'The ID of the project to list files from.'
           }
         },
-        required: ['file_key']
+        required: ['project_id']
       }
     }
   }
