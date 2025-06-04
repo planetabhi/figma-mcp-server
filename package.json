@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "list-tools": "node index.js tools"
+    "list-tools": "node index.js tools",
+    "start": "node mcpServer.js --sse"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",

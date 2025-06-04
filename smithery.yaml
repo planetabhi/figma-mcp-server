@@ -1,0 +1,39 @@
+startCommand:
+  type: http
+  command: node mcpServer.js --sse
+  configSchema:
+    type: object
+    required: ["port"]
+    properties:
+      port:
+        type: number
+        title: "Server Port"
+        description: "Port number for the MCP server"
+        default: 3001
+      mode:
+        type: string
+        title: "Server Mode"
+        description: "Choose between SSE (Server-Sent Events) or stdio mode"
+        enum: ["sse", "stdio"]
+        default: "sse"
+      serverName:
+        type: string
+        title: "Server Name"
+        description: "Name of the MCP server instance"
+        default: "generated-mcp-server"
+      version:
+        type: string
+        title: "Server Version"
+        description: "Version of the MCP server"
+        default: "0.1.2"
+
+connection:
+  type: sse
+  configSchema:
+    type: object
+    properties:
+      baseUrl:
+        type: string
+        title: "Base URL"
+        description: "Base URL for the MCP server"
+        default: "http://localhost:3001" 
