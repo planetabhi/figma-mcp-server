@@ -1,35 +1,23 @@
-/**
- * Function to get library usage analytics from Figma.
- *
- * @param {Object} args - Arguments for the analytics request.
- * @param {string} args.library_file_key - The key of the library file for which to retrieve usage analytics.
- * @returns {Promise<Object>} - The result of the library usage analytics request.
- */
 const executeFunction = async ({ library_file_key }) => {
   const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
-    // Construct the URL for the request
     const url = `${baseUrl}/v1/analytics/libraries/${library_file_key}/usages`;
 
-    // Set up headers for the request
     const headers = {
       'X-Figma-Token': token
     };
 
-    // Perform the fetch request
     const response = await fetch(url, {
       method: 'GET',
       headers
     });
 
-    // Check if the response was successful
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData);
     }
 
-    // Parse and return the response data
     const data = await response.json();
     return data;
   } catch (error) {
@@ -38,10 +26,6 @@ const executeFunction = async ({ library_file_key }) => {
   }
 };
 
-/**
- * Tool configuration for getting library usage analytics from Figma.
- * @type {Object}
- */
 const apiTool = {
   function: executeFunction,
   definition: {

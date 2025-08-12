@@ -7,7 +7,7 @@ Install the server
 ```bash
 git clone https://github.com/planetabhi/figma-mcp-server.git
 cd figma-mcp-server
-pnpm i
+bun i
 ```
 
 ### Set tool environment variable
@@ -23,7 +23,7 @@ FIGMA_API_KEY=
 List descriptions and parameters from all available tools
 
 ```bash
-pnpm list-tools
+bun list-tools
 ```
 
 ## Run the MCP Server
@@ -68,45 +68,4 @@ realpath mcpServer.js
 ```bash
 # Create a new MCP request and add the server's command and arguments
 STDIO <absolute_path_to_node> <absolute_path_to_mcpServer.js>
-```
-
-> [Postman collection](https://www.postman.com/doitagain/workspace/figma/collection/68369062465421c338809955?action=share&creator=17652550).
-
----
-
-### Misc
-
-#### Docker Deployment
-
-For production deployments, you can use Docker:
-
-**1. Build Docker image**
-
-```bash
-docker build -t figma-mcp-server .
-```
-
-**2. Claude Desktop integration**
-
-Add Docker server configuration to Claude Desktop (Settings → Developers → Edit Config):
-
-```json
-{
-  "mcpServers": {
-    "figma-mcp-server": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "--env-file=.env", "figma-mcp-server"]
-    }
-  }
-}
-```
-
-> Add your environment variables inside the `.env` file.
-
-#### Server-Sent Events (SSE)
-
-To run the server with Server-Sent Events (SSE) support, use the `--sse` flag:
-
-```bash
-node mcpServer.js --sse
 ```

@@ -19,10 +19,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-// Server configuration
 const SERVER_NAME = process.env.SERVER_NAME || "figma-mcp-server";
 const SERVER_VERSION = process.env.SERVER_VERSION || "0.1.2";
 const DEFAULT_PORT = 3001;
@@ -41,14 +39,18 @@ async function transformTools(tools) {
     .filter(Boolean);
 }
 
-async function setupServerHandlers(server, tools) {
+async function setupServerHandlers(server, tools, transformedTools) {
+  const toolMap = new Map(
+    tools.map((tool) => [tool.definition.function.name, tool])
+  );
+
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: await transformTools(tools),
+    tools: transformedTools,
   }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
-    const tool = tools.find((t) => t.definition.function.name === toolName);
+    const tool = toolMap.get(toolName);
     if (!tool) {
       throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${toolName}`);
     }
@@ -87,6 +89,7 @@ async function run() {
   const args = process.argv.slice(2);
   const isSSE = args.includes("--sse");
   const tools = await discoverTools();
+  const transformedTools = await transformTools(tools);
 
   if (isSSE) {
     const app = express();
@@ -94,7 +97,6 @@ async function run() {
     const servers = {};
 
     app.get("/sse", async (_req, res) => {
-      // Create a new Server instance for each session
       const server = new Server(
         {
           name: SERVER_NAME,
@@ -107,7 +109,7 @@ async function run() {
         }
       );
       server.onerror = (error) => console.error("[Error]", error);
-      await setupServerHandlers(server, tools);
+      await setupServerHandlers(server, tools, transformedTools);
 
       const transport = new SSEServerTransport("/messages", res);
       transports[transport.sessionId] = transport;
@@ -141,7 +143,6 @@ async function run() {
       console.log(`[Server] Version: ${SERVER_VERSION}`);
     });
   } else {
-    // stdio mode: single server instance
     const server = new Server(
       {
         name: SERVER_NAME,
@@ -154,7 +155,7 @@ async function run() {
       }
     );
     server.onerror = (error) => console.error("[Error]", error);
-    await setupServerHandlers(server, tools);
+    await setupServerHandlers(server, tools, transformedTools);
 
     process.on("SIGINT", async () => {
       await server.close();
