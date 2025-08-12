@@ -61,13 +61,13 @@ realpath mcpServer.js
 
 ### Run with Gemini CLI
 
-1. Create the .gemini directory if it doesn't exist
+1. Open a new terminal and create the `.gemini` directory (if it doesn't exist)
 
 ```bash
 mkdir -p ~/.gemini
 ```
 
-2. Create the settings.json file
+2. Create the `settings.json` file
 
 ```bash
 echo '{
@@ -88,7 +88,7 @@ echo '{
 3. Start Gemini CLI
 
 ```bash
-export GEMINI_API_KEY=""
+export GEMINI_API_KEY="your_gemini_api_key_here"
 npx https://github.com/google-gemini/gemini-cli
 ```
 
