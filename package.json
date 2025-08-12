@@ -1,6 +1,6 @@
 {
   "name": "figma-mcp-server",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "A simple MCP server for Figma",
   "main": "index.js",
   "type": "module",

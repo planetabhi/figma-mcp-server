@@ -1,27 +1,14 @@
-/**
- * Function to create development resources for a Figma file.
- *
- * @param {Object} args - Arguments for creating development resources.
- * @param {string} args.file_key - The key of the Figma file.
- * @param {string} args.node_id - The node ID for the resource.
- * @param {string} args.name - The name of the development resource.
- * @param {string} args.url - The URL for the development resource.
- * @returns {Promise<Object>} - The result of the resource creation.
- */
 const executeFunction = async ({ file_key, node_id, name, url }) => {
   const baseUrl = 'https://api.figma.com';
   const token = process.env.FIGMA_API_KEY;
   try {
-    // Construct the URL for the API request
     const url = `${baseUrl}/v1/files/${file_key}/dev_resources`;
 
-    // Set up headers for the request
     const headers = {
       'X-Figma-Token': token,
       'Content-Type': 'application/json'
     };
 
-    // Create the body for the request
     const body = JSON.stringify({
       dev_resources: [
         {
@@ -33,20 +20,17 @@ const executeFunction = async ({ file_key, node_id, name, url }) => {
       ]
     });
 
-    // Perform the fetch request
     const response = await fetch(url, {
       method: 'POST',
       headers,
       body
     });
 
-    // Check if the response was successful
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData);
     }
 
-    // Parse and return the response data
     const data = await response.json();
     return data;
   } catch (error) {
@@ -55,10 +39,6 @@ const executeFunction = async ({ file_key, node_id, name, url }) => {
   }
 };
 
-/**
- * Tool configuration for creating development resources for a Figma file.
- * @type {Object}
- */
 const apiTool = {
   function: executeFunction,
   definition: {
