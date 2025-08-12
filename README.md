@@ -58,14 +58,46 @@ realpath mcpServer.js
 
 > To try it out in Claude Desktop, first enable the `get_file_nodes` tool from the tools list. Copy a design node link from a Figma file, then paste it into Claude Desktop prompt. It will return the design node data and other information.
 
-### Run in Postman
 
-1. Choose an existing workspace or create a new one.
-2. Select New > MCP. Postman opens a new MCP request in a new tab.
-3. Select the server's communication method STDIO.
-4. Enter the server's command and arguments.
+### Run with Gemini CLI
+
+1. Create the .gemini directory if it doesn't exist
 
 ```bash
-# Create a new MCP request and add the server's command and arguments
-STDIO <absolute_path_to_node> <absolute_path_to_mcpServer.js>
+mkdir -p ~/.gemini
 ```
+
+2. Create the settings.json file
+
+```bash
+echo '{
+  "mcpServers": {
+    "figma-mcp-server": {
+      "command": "<absolute_path_to_node>",
+      "args": ["mcpServer.js"],
+      "cwd": "<absolute_path_to_working_directory>",
+      "env": {
+        "FIGMA_API_KEY": "your_figma_api_key_here"
+      },
+      "trust": true
+    }
+  }
+}' > ~/.gemini/settings.json
+```
+
+3. Start Gemini CLI
+
+```bash
+export GEMINI_API_KEY=""
+npx https://github.com/google-gemini/gemini-cli
+```
+
+- Use `/mcp` to list all tools
+- Use `/mcp desc` to show server and tool descriptions
+- Use `/mcp schema` to show tool parameter schemas
+- Use `/mcp nodesc` to hide descriptions
+
+
+---
+
+⋛⋋( ⊙◊⊙)⋌⋚
