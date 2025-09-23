@@ -5,17 +5,18 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "list-tools": "node index.js tools",
-    "start": "node mcpServer.js --sse"
+    "list-tools": "bun index.js tools",
+    "start": "bun mcpServer.js --sse"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "commander": "^14.0.0",
-    "dotenv": "^16.5.0",
+    "@modelcontextprotocol/sdk": "^1.18.1",
+    "commander": "^14.0.1",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0",
+    "bun": ">=1.1.0"
   },
   "keywords": [
     "figma",
