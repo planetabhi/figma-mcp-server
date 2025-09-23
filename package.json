@@ -1,7 +1,7 @@
 {
   "name": "figma-mcp-server",
-  "version": "2.0.0",
-  "description": "A simple MCP server for Figma",
+  "version": "2.0.1",
+  "description": "A comprehensive local MCP server for Figma. Connect Figma with the Gemini CLI, Cursor, and Claude Desktop.",
   "main": "index.js",
   "type": "module",
   "scripts": {
