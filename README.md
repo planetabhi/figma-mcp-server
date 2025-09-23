@@ -33,12 +33,6 @@ bun run list-tools
 
 ## Run the MCP Server
 
-### Modes
-
-- Stdio (default for Claude Desktop and Gemini CLI): run `bun mcpServer.js` (no `--sse`).
-- SSE (local web endpoint): run `bun start` or `bun mcpServer.js --sse`.
-  - Port defaults to `3001` or use `PORT=<port>` to override.
-
 ### Find bun and server path
 
 ```bash
@@ -109,32 +103,22 @@ npx https://github.com/google-gemini/gemini-cli
 
 ---
 
-### npm (optional)
-
-If you prefer npm instead of Bun, use these equivalents:
-
-```bash
-# Install
-npm i
-
-# List all tools
-node index.js tools
-
-# Run SSE locally (web/SSE mode)
-node mcpServer.js --sse
-```
-
-For Claude Desktop and Gemini CLI, replace the `command` with the absolute path to `node` and keep the same `args`.
-
-
 ### Troubleshooting
 
-- Missing Figma token:
-  - Error: missing or invalid `FIGMA_API_KEY`. Ensure `.env` exists next to `mcpServer.js` with `FIGMA_API_KEY=...`.
-- Port already in use (SSE mode):
-  - Run with a custom port: `PORT=3005 bun start`.
-- Bun not found:
-  - Ensure `which bun` returns a path; restart your shell after installing Bun.
+- Missing Figma token
+  - Error: missing or invalid `FIGMA_API_KEY`. 
+  - Ensure `.env` exists next to `mcpServer.js` with `FIGMA_API_KEY=...`.
+- Port already in use (SSE mode)
+  - Run SSE on a custom port: `PORT=3005 node mcpServer.js --sse`.
+- Bun not found
+  - Ensure `which bun` returns a path. 
+  - Restart your shell after installing Bun.
+- Using npm instead of Bun
+  - Replace `bun i` → `npm i`
+  - Replace `bun run list-tools` → `node index.js tools`
+- Manual start not required
+  - Only start manually for SSE or local web endpoint: `node mcpServer.js --sse`
+  - Default port is `3001`, override with `PORT=<port>`
 
 
 ---
