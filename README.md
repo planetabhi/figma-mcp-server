@@ -109,9 +109,9 @@ npx https://github.com/google-gemini/gemini-cli
 
 ---
 
-### npm (optional)
+### npm
 
-If you prefer npm instead of Bun, use these equivalents:
+If you prefer npm instead of Bun, use:
 
 ```bash
 # Install
@@ -124,17 +124,19 @@ node index.js tools
 node mcpServer.js --sse
 ```
 
-For Claude Desktop and Gemini CLI, replace the `command` with the absolute path to `node` and keep the same `args`.
+> For Claude Desktop and Gemini CLI, replace the `command` with the absolute path to `node` and keep the same `args`.
 
 
 ### Troubleshooting
 
 - Missing Figma token:
-  - Error: missing or invalid `FIGMA_API_KEY`. Ensure `.env` exists next to `mcpServer.js` with `FIGMA_API_KEY=...`.
+  - Error: missing or invalid `FIGMA_API_KEY`. 
+  - Ensure `.env` exists next to `mcpServer.js` with `FIGMA_API_KEY=...`.
 - Port already in use (SSE mode):
   - Run with a custom port: `PORT=3005 bun start`.
 - Bun not found:
-  - Ensure `which bun` returns a path; restart your shell after installing Bun.
+  - Ensure `which bun` returns a path. 
+  - Restart your shell after installing Bun.
 
 
 ---
