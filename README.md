@@ -1,14 +1,10 @@
 # Figma MCP Server
 A comprehensive local MCP server for Figma. Connect Figma with the Gemini CLI, Cursor, and Claude Desktop.
 
-> Prerequisites: Node >= 20, Bun >= 1.1.0
+### Prerequisites
 
-Install Bun (macOS/Linux):
-
-```bash
-curl -fsSL https://bun.sh/install | bash
-# Then restart your terminal or source your shell profile
-```
+- [Node](https://nodejs.org/) (>= 20)
+- [Bun](https://bun.sh/) (>= 1.1.0)
 
 ## Install
 Install the server
@@ -52,7 +48,6 @@ which bun
 # Get the absolute path of the MCP server
 realpath mcpServer.js
 ```
-
 
 ### Run with Claude Desktop
 
@@ -112,7 +107,9 @@ npx https://github.com/google-gemini/gemini-cli
 - Use `/mcp schema` to show tool parameter schemas
 - Use `/mcp nodesc` to hide descriptions
 
-## npm (optional)
+---
+
+### npm (optional)
 
 If you prefer npm instead of Bun, use these equivalents:
 
@@ -130,7 +127,7 @@ node mcpServer.js --sse
 For Claude Desktop and Gemini CLI, replace the `command` with the absolute path to `node` and keep the same `args`.
 
 
-## Troubleshooting
+### Troubleshooting
 
 - Missing Figma token:
   - Error: missing or invalid `FIGMA_API_KEY`. Ensure `.env` exists next to `mcpServer.js` with `FIGMA_API_KEY=...`.
