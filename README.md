@@ -1,9 +1,10 @@
 # Figma MCP Server
 A comprehensive local MCP server for Figma. Connect Figma with the Gemini CLI, Cursor, and Claude Desktop.
 
+![Figma MCP Server Preview](/preview.webp)
+
 ### Prerequisites
 
-- [Node](https://nodejs.org/) (>= 20)
 - [Bun](https://bun.sh/) (>= 1.1.0)
 
 ## Install
