@@ -1,6 +1,7 @@
-const executeFunction = async ({ library_file_key }) => {
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
+const executeFunction = async ({ library_file_key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
   try {
     const url = `${baseUrl}/v1/analytics/libraries/${library_file_key}/actions`;
 
@@ -14,19 +15,16 @@ const executeFunction = async ({ library_file_key }) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error retrieving library action analytics:', error);
-    return { error: 'An error occurred while retrieving library action analytics.' };
-  }
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

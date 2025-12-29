@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { registerToolsCommand } from "./commands/tools.js";
+import { registerToolsCommand } from "./commands/tools.ts";
 
 const program = new Command();
 

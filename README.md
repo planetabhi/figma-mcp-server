@@ -1,9 +1,10 @@
 # Figma MCP Server
 A comprehensive local MCP server for Figma. Connect Figma with the Gemini CLI, Cursor, and Claude Desktop.
 
+![Figma MCP Server Preview](/preview.webp)
+
 ### Prerequisites
 
-- [Node](https://nodejs.org/) (>= 20)
 - [Bun](https://bun.sh/) (>= 1.1.0)
 
 ## Install
@@ -28,7 +29,9 @@ FIGMA_API_KEY=
 List descriptions and parameters from all available tools
 
 ```bash
-bun run list-tools
+bun list-tools
+# or
+bun index.ts tools
 ```
 
 ## Run the MCP Server
@@ -40,7 +43,7 @@ bun run list-tools
 which bun
 
 # Get the absolute path of the MCP server
-realpath mcpServer.js
+realpath mcpServer.ts
 ```
 
 ### Run with Claude Desktop
@@ -52,7 +55,7 @@ realpath mcpServer.js
   "mcpServers": {
     "figma-mcp-server": {
       "command": "<absolute_path_to_bun>",
-      "args": ["<absolute_path_to_mcpServer.js>"]
+      "args": ["<absolute_path_to_mcpServer.ts>"]
     }
   }
 }
@@ -78,7 +81,7 @@ echo '{
   "mcpServers": {
     "figma-mcp-server": {
       "command": "<absolute_path_to_bun>",
-      "args": ["mcpServer.js"],
+      "args": ["mcpServer.ts"],
       "cwd": "<absolute_path_to_working_directory>",
       "env": {
         "FIGMA_API_KEY": "your_figma_api_key_here"
@@ -107,17 +110,17 @@ npx https://github.com/google-gemini/gemini-cli
 
 - Missing Figma token
   - Error: missing or invalid `FIGMA_API_KEY`. 
-  - Ensure `.env` exists next to `mcpServer.js` with `FIGMA_API_KEY=...`.
+  - Ensure `.env` exists next to `mcpServer.ts` with `FIGMA_API_KEY=...`.
 - Port already in use (SSE mode)
-  - Run SSE on a custom port: `PORT=3005 node mcpServer.js --sse`.
+  - Run SSE on a custom port: `PORT=3005 bun mcpServer.ts --sse`.
 - Bun not found
   - Ensure `which bun` returns a path. 
   - Restart your shell after installing Bun.
 - Using npm instead of Bun
   - Replace `bun i` → `npm i`
-  - Replace `bun run list-tools` → `node index.js tools`
+  - Replace `bun list-tools` → `npx tsx index.ts tools`
 - Manual start not required
-  - Only start manually for SSE or local web endpoint: `node mcpServer.js --sse`
+  - Only start manually for SSE or local web endpoint: `bun mcpServer.ts --sse`
   - Default port is `3001`, override with `PORT=<port>`
 
 

@@ -1,6 +1,7 @@
-const executeFunction = async ({ key }) => {
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
+const executeFunction = async ({ key }: any) => {
   const baseUrl = 'https://api.figma.com/v1/components';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
   try {
     const url = `${baseUrl}/${key}`;
 
@@ -14,19 +15,16 @@ const executeFunction = async ({ key }) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error retrieving component metadata:', error);
-    return { error: 'An error occurred while retrieving component metadata.' };
-  }
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

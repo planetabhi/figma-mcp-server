@@ -1,6 +1,7 @@
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
 const executeFunction = async () => {
   const baseUrl = 'https://api.figma.com/v1/libraries/published';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
   try {
     const headers = {
       'X-Figma-Token': token
@@ -12,19 +13,16 @@ const executeFunction = async () => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error listing published libraries:', error);
-    return { error: 'An error occurred while listing published libraries.' };
-  }
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

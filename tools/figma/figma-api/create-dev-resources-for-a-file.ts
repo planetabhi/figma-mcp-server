@@ -1,8 +1,9 @@
-const executeFunction = async ({ file_key, node_id, name, url }) => {
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key, node_id, name, url }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
   try {
-    const url = `${baseUrl}/v1/files/${file_key}/dev_resources`;
+    const endpoint = `${baseUrl}/v1/files/${file_key}/dev_resources`;
 
     const headers = {
       'X-Figma-Token': token,
@@ -20,26 +21,23 @@ const executeFunction = async ({ file_key, node_id, name, url }) => {
       ]
     });
 
-    const response = await fetch(url, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers,
       body
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error creating development resources:', error);
-    return { error: 'An error occurred while creating development resources.' };
-  }
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

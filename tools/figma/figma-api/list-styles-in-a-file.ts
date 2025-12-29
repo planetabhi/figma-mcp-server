@@ -1,6 +1,7 @@
-const executeFunction = async ({ file_key }) => {
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
 
   try {
     const url = `${baseUrl}/v1/files/${file_key}/styles`;
@@ -15,19 +16,16 @@ const executeFunction = async ({ file_key }) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error listing styles in the Figma file:', error);
-    return { error: 'An error occurred while listing styles in the Figma file.' };
-  }
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

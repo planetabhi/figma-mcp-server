@@ -1,18 +1,21 @@
 {
   "name": "figma-mcp-server",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "A comprehensive local MCP server for Figma. Connect Figma with the Gemini CLI, Cursor, and Claude Desktop.",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
-    "list-tools": "bun index.js tools",
-    "start": "bun mcpServer.js --sse"
+    "list-tools": "bun index.ts tools",
+    "start": "bun mcpServer.ts --sse",
+    "typecheck": "bun x tsc --noEmit"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.1",
-    "commander": "^14.0.1",
-    "dotenv": "^17.2.2",
-    "express": "^5.1.0"
+    "@clack/prompts": "^0.11.0",
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "commander": "^14.0.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "picocolors": "^1.1.1"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -33,5 +36,11 @@
   "bugs": {
     "url": "https://github.com/planetabhi/figma-mcp-server/issues"
   },
-  "homepage": "https://github.com/planetabhi/figma-mcp-server#readme"
+  "homepage": "https://github.com/planetabhi/figma-mcp-server#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "bun-types": "^1.3.5",
+    "typescript": "^5.9.3"
+  }
 }

@@ -1,6 +1,7 @@
-const executeFunction = async ({ project_id }) => {
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
+const executeFunction = async ({ project_id }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
 
   try {
     const url = `${baseUrl}/v1/projects/${project_id}/files`;
@@ -15,19 +16,16 @@ const executeFunction = async ({ project_id }) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error listing files in project:', error);
-    return { error: 'An error occurred while listing files in the project.' };
-  }
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

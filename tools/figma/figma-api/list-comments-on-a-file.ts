@@ -1,6 +1,7 @@
-const executeFunction = async ({ file_key }) => {
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = getFigmaToken();
   try {
     const url = `${baseUrl}/v1/files/${file_key}/comments`;
 
@@ -14,19 +15,16 @@ const executeFunction = async ({ file_key }) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData);
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
-    return data.comments || [];
-  } catch (error) {
-    console.error('Error listing comments on the Figma file:', error);
-    return { error: 'An error occurred while listing comments.' };
-  }
+    return (data as any).comments || [];
+  } catch (error) { throw error; }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',
