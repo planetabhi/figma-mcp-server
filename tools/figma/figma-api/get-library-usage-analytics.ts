@@ -15,16 +15,13 @@ const executeFunction = async ({ library_file_key }: any) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error retrieving library usage analytics:', error);
-    return { error: 'An error occurred while retrieving library usage analytics.' };
-  }
+  } catch (error) { throw error; }
 };
 
 const apiTool: ApiTool = {

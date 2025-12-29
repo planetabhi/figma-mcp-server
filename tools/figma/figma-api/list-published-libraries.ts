@@ -13,16 +13,13 @@ const executeFunction = async () => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error listing published libraries:', error);
-    return { error: 'An error occurred while listing published libraries.' };
-  }
+  } catch (error) { throw error; }
 };
 
 const apiTool: ApiTool = {

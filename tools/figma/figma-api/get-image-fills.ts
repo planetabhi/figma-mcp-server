@@ -18,16 +18,13 @@ const executeFunction = async ({ file_key, node_id }: any) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error('Error getting image fills:', error);
-    return { error: 'An error occurred while getting image fills.' };
-  }
+  } catch (error) { throw error; }
 };
 
 const apiTool: ApiTool = {

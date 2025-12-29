@@ -15,16 +15,13 @@ const executeFunction = async ({ file_key }: any) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      const errorData = await response.json() as any;
+      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
     }
 
     const data = await response.json();
     return (data as any).comments || [];
-  } catch (error) {
-    console.error('Error listing comments on the Figma file:', error);
-    return { error: 'An error occurred while listing comments.' };
-  }
+  } catch (error) { throw error; }
 };
 
 const apiTool: ApiTool = {
