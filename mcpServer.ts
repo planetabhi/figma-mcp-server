@@ -64,7 +64,7 @@ async function setupServerHandlers(
         if (!tool) {
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${toolName}`);
         }
-        const args = request.params.arguments as Record<string, any>;
+        const args = request.params.arguments || {};
         const requiredParameters =
             tool.definition?.function?.parameters?.required || [];
         for (const requiredParameter of requiredParameters) {
