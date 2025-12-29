@@ -135,7 +135,13 @@ async function run() {
         });
 
         app.post("/messages", async (req, res) => {
-            const sessionId = req.query.sessionId as string;
+            const sessionId = req.query.sessionId;
+
+            if (typeof sessionId !== "string") {
+                res.status(400).send("Invalid or missing sessionId");
+                return;
+            }
+
             const transport = transports[sessionId];
             const server = servers[sessionId];
 
