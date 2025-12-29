@@ -1,8 +1,9 @@
-const executeFunction = async ({ key }) => {
+import { ApiTool } from "../../../lib/tools.ts";
+const executeFunction = async ({ key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = process.env.FIGMA_API_KEY || '';
   try {
-    const url = `${baseUrl}/v1/component_sets/${key}`;
+    const url = `${baseUrl}/v1/styles/${key}`;
 
     const headers = {
       'X-Figma-Token': token
@@ -15,30 +16,30 @@ const executeFunction = async ({ key }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error retrieving component set metadata:', error);
-    return { error: 'An error occurred while retrieving component set metadata.' };
+    console.error('Error retrieving published style:', error);
+    return { error: 'An error occurred while retrieving the published style.' };
   }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',
     function: {
-      name: 'get_component_set',
-      description: 'Retrieve metadata for a published component set by its key.',
+      name: 'get_published_style',
+      description: 'Retrieve metadata for a published style by its key.',
       parameters: {
         type: 'object',
         properties: {
           key: {
             type: 'string',
-            description: 'The key of the component set to retrieve.'
+            description: 'The key of the published style to retrieve.'
           }
         },
         required: ['key']

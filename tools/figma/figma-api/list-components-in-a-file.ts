@@ -1,9 +1,9 @@
-const executeFunction = async ({ file_key }) => {
+import { ApiTool } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
-
+  const token = process.env.FIGMA_API_KEY || '';
   try {
-    const url = `${baseUrl}/v1/files/${file_key}/styles`;
+    const url = `${baseUrl}/v1/files/${file_key}/components`;
 
     const headers = {
       'X-Figma-Token': token
@@ -16,30 +16,30 @@ const executeFunction = async ({ file_key }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error listing styles in the Figma file:', error);
-    return { error: 'An error occurred while listing styles in the Figma file.' };
+    console.error('Error listing components in file:', error);
+    return { error: 'An error occurred while listing components in the file.' };
   }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',
     function: {
-      name: 'list_styles_in_file',
-      description: 'List styles in a specific Figma file.',
+      name: 'list_components',
+      description: 'List components in a specific Figma file.',
       parameters: {
         type: 'object',
         properties: {
           file_key: {
             type: 'string',
-            description: 'The key of the Figma file to retrieve styles from.'
+            description: 'The key of the Figma file to retrieve components from.'
           }
         },
         required: ['file_key']

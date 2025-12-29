@@ -1,6 +1,7 @@
-const executeFunction = async ({ file_key, node_id, name, url }) => {
+import { ApiTool } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key, node_id, name, url }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = process.env.FIGMA_API_KEY || '';
   try {
     const url = `${baseUrl}/v1/files/${file_key}/dev_resources`;
 
@@ -28,7 +29,7 @@ const executeFunction = async ({ file_key, node_id, name, url }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
@@ -39,7 +40,7 @@ const executeFunction = async ({ file_key, node_id, name, url }) => {
   }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

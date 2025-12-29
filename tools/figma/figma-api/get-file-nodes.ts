@@ -1,8 +1,9 @@
-const executeFunction = async ({ file_key, node_id }) => {
+import { ApiTool } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key, node_id }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = process.env.FIGMA_API_KEY || '';
   try {
-    const url = new URL(`${baseUrl}/v1/images/${file_key}`);
+    const url = new URL(`${baseUrl}/v1/files/${file_key}/nodes`);
     if (node_id) {
       url.searchParams.append('ids', node_id);
     }
@@ -18,24 +19,24 @@ const executeFunction = async ({ file_key, node_id }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error getting image fills:', error);
-    return { error: 'An error occurred while getting image fills.' };
+    console.error('Error getting file nodes:', error);
+    return { error: 'An error occurred while retrieving file nodes.' };
   }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',
     function: {
-      name: 'get_image_fills',
-      description: 'Get image fills from a Figma file.',
+      name: 'get_file_nodes',
+      description: 'Retrieve specific nodes from a Figma file.',
       parameters: {
         type: 'object',
         properties: {
@@ -45,7 +46,7 @@ const apiTool = {
           },
           node_id: {
             type: 'string',
-            description: 'The ID of the specific node to retrieve images for.'
+            description: 'The ID of the node to retrieve.'
           }
         },
         required: ['file_key']

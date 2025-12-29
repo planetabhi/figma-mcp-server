@@ -1,6 +1,7 @@
-const executeFunction = async ({ library_id }) => {
+import { ApiTool } from "../../../lib/tools.ts";
+const executeFunction = async ({ library_id }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
+  const token = process.env.FIGMA_API_KEY || '';
   try {
     const url = `${baseUrl}/v1/libraries/${library_id}`;
 
@@ -15,7 +16,7 @@ const executeFunction = async ({ library_id }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
@@ -26,7 +27,7 @@ const executeFunction = async ({ library_id }) => {
   }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',

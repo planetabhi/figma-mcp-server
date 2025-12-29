@@ -1,9 +1,9 @@
-const executeFunction = async ({ file_key }) => {
+import { ApiTool } from "../../../lib/tools.ts";
+const executeFunction = async ({ file_key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY;
-
+  const token = process.env.FIGMA_API_KEY || '';
   try {
-    const url = `${baseUrl}/v1/files/${file_key}/component_sets`;
+    const url = `${baseUrl}/v1/files/${file_key}/dev_resources`;
 
     const headers = {
       'X-Figma-Token': token
@@ -16,30 +16,30 @@ const executeFunction = async ({ file_key }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error listing component sets:', error);
-    return { error: 'An error occurred while listing component sets.' };
+    console.error('Error listing development resources:', error);
+    return { error: 'An error occurred while listing development resources.' };
   }
 };
 
-const apiTool = {
+const apiTool: ApiTool = {
   function: executeFunction,
   definition: {
     type: 'function',
     function: {
-      name: 'list_component_sets',
-      description: 'List all component sets published in a specific Figma file.',
+      name: 'list_dev_resources',
+      description: 'List development resources for a specific Figma file.',
       parameters: {
         type: 'object',
         properties: {
           file_key: {
             type: 'string',
-            description: 'The key of the Figma file to retrieve component sets from.'
+            description: 'The key of the Figma file to retrieve development resources for.'
           }
         },
         required: ['file_key']
