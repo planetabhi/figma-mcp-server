@@ -1,65 +1,87 @@
 import { Command } from "commander";
+import { intro, outro, spinner, select, isCancel, note, log } from "@clack/prompts";
+import pc from "picocolors";
 import { discoverTools, type ToolWithDefinition } from "../lib/tools.ts";
 
 export function registerToolsCommand(program: Command) {
     program
         .command("tools")
-        .description("List all available API tools")
+        .description("Explore available API tools")
         .action(async () => {
+            console.clear();
+            intro(pc.bgCyan(pc.black(" Figma MCP Server ")));
+
+            const s = spinner();
+            s.start("Discovering tools...");
             const tools = await discoverTools();
+            s.stop(`Found ${tools.length} tools`);
+
             if (tools.length === 0) {
-                console.log("No tools found. Tools should be organized as:");
-                console.log("tools/workspace/collection/request.ts\n");
+                note("No tools found.", "Info");
+                outro("Done");
                 return;
             }
 
-            console.log("\nAvailable Tools:\n");
+            while (true) {
+                const options: { value: ToolWithDefinition | string; label: string; hint?: string }[] = tools.map((t) => ({
+                    value: t,
+                    label: t.definition.function.name,
+                    hint: t.definition.function.description?.slice(0, 50) + (t.definition.function.description && t.definition.function.description.length > 50 ? "..." : "")
+                }));
 
-            // Group tools by workspace/collection
-            const groupedTools = tools.reduce((acc, tool) => {
-                // Extract workspace and collection from path
-                const parts = tool.path.split("/");
-                const workspace = parts[1] || "Unknown Workspace";
-                const collection = parts[2] || "Unknown Collection";
+                const selectedTool = await select({
+                    message: "Select a tool to view details (Expand)",
+                    options: [{ value: 'all', label: pc.cyan('Expand All') }, ...options, { value: 'exit', label: pc.red('Exit') }] as any,
+                });
 
-                if (!acc[workspace]) acc[workspace] = {};
-                if (!acc[workspace][collection]) acc[workspace][collection] = [];
-
-                acc[workspace][collection].push(tool);
-                return acc;
-            }, {} as Record<string, Record<string, ToolWithDefinition[]>>);
-
-            // Print tools in a hierarchical structure
-            for (const [workspace, collections] of Object.entries(groupedTools)) {
-                console.log(`Workspace: ${workspace}`);
-                for (const [collection, tools] of Object.entries(collections)) {
-                    console.log(`  Collection: ${collection}`);
-                    tools.forEach(
-                        ({
-                            definition: {
-                                function: { name, description, parameters },
-                            },
-                        }) => {
-                            console.log(`    ${name}`);
-                            console.log(
-                                `      Description: ${description || "No description provided"}`
-                            );
-                            if (parameters?.properties) {
-                                console.log("      Parameters:");
-                                Object.entries(parameters.properties).forEach(
-                                    ([name, details]) => {
-                                        console.log(
-                                            `        - ${name}: ${details.description || "No description"
-                                            }`
-                                        );
-                                    }
-                                );
-                            }
-                            console.log("");
-                        }
-                    );
+                if (isCancel(selectedTool) || selectedTool === 'exit') {
+                    outro("Exited tool explorer");
+                    break;
                 }
-                console.log("");
+
+                if (selectedTool === 'all') {
+                    console.clear();
+                    log.info(pc.magenta(pc.bold("All Tools Details")));
+
+                    tools.forEach(tool => {
+                        const def = tool.definition.function;
+                        console.log(pc.green(pc.bold(`\nTool: ${def.name}`)));
+                        console.log(pc.white(`Description: ${def.description || "No description"}`));
+
+                        if (def.parameters?.properties && Object.keys(def.parameters.properties).length > 0) {
+                            console.log(pc.yellow("Parameters:"));
+                            Object.entries(def.parameters.properties).forEach(([name, details]) => {
+                                console.log(`  ${pc.cyan(name)}: ${pc.dim(details.description || "No description")}`);
+                            });
+                        } else {
+                            console.log(pc.dim("No parameters required."));
+                        }
+                        console.log(pc.dim("\n────────────────────────────────────────"));
+                    });
+
+                    outro("Done");
+                    break;
+                }
+
+                const tool = selectedTool as ToolWithDefinition;
+                const def = tool.definition.function;
+
+                console.clear();
+                log.info(pc.magenta(pc.bold(`Tool: ${def.name}`)));
+                log.message(pc.white(def.description || "No description"));
+
+                if (def.parameters?.properties && Object.keys(def.parameters.properties).length > 0) {
+                    log.info(pc.yellow("Parameters:"));
+                    Object.entries(def.parameters.properties).forEach(([name, details]) => {
+                        console.log(`  ${pc.cyan(name)}: ${pc.dim(details.description || "No description")}`);
+                    });
+                } else {
+                    log.info(pc.dim("No parameters required."));
+                }
+
+                console.log(pc.dim("\n────────────────────────────────────────\n"));
+
+                // Continue loop implicitly acts as "collapse"/"back"
             }
         });
 }

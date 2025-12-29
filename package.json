@@ -10,10 +10,12 @@
     "typecheck": "bun x tsc --noEmit"
   },
   "dependencies": {
+    "@clack/prompts": "^0.11.0",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "commander": "^14.0.2",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "picocolors": "^1.1.1"
   },
   "engines": {
     "node": ">=20.0.0",
