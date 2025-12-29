@@ -28,3 +28,11 @@ export async function discoverTools(): Promise<ToolWithDefinition[]> {
     });
     return Promise.all(toolPromises);
 }
+
+export function getFigmaToken(): string {
+    const token = process.env.FIGMA_API_KEY;
+    if (!token) {
+        throw new Error("FIGMA_API_KEY environment variable is not set.");
+    }
+    return token;
+}

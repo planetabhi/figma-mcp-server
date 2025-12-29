@@ -1,7 +1,7 @@
-import { ApiTool } from "../../../lib/tools.ts";
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
 const executeFunction = async ({ file_key }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY || '';
+  const token = getFigmaToken();
   try {
     const url = `${baseUrl}/v1/files/${file_key}`;
 

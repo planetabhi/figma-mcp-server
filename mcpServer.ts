@@ -22,6 +22,11 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
+if (!process.env.FIGMA_API_KEY) {
+    console.error("Error: FIGMA_API_KEY environment variable is required.");
+    process.exit(1);
+}
+
 const SERVER_NAME = process.env.SERVER_NAME || "figma-mcp-server";
 const SERVER_VERSION = process.env.SERVER_VERSION || "0.1.2";
 const DEFAULT_PORT = 3001;

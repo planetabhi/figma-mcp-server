@@ -1,9 +1,9 @@
-import { ApiTool } from "../../../lib/tools.ts";
+import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
 const executeFunction = async ({ file_key, node_id, name, url }: any) => {
   const baseUrl = 'https://api.figma.com';
-  const token = process.env.FIGMA_API_KEY || '';
+  const token = getFigmaToken();
   try {
-    const url = `${baseUrl}/v1/files/${file_key}/dev_resources`;
+    const endpoint = `${baseUrl}/v1/files/${file_key}/dev_resources`;
 
     const headers = {
       'X-Figma-Token': token,
@@ -21,7 +21,7 @@ const executeFunction = async ({ file_key, node_id, name, url }: any) => {
       ]
     });
 
-    const response = await fetch(url, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers,
       body
