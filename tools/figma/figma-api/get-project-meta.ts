@@ -1,7 +1,7 @@
 import { ApiTool, figmaRequest } from "../../../lib/tools.ts";
 
 const executeFunction = async ({ project_id }: any) => {
-  return figmaRequest(`/v1/projects/${project_id}/files`);
+  return figmaRequest(`/v1/projects/${project_id}/meta`);
 };
 
 const apiTool: ApiTool = {
@@ -9,15 +9,12 @@ const apiTool: ApiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'list_files_in_project',
-      description: 'List files in a specified Figma project.',
+      name: 'get_project_meta',
+      description: 'Get metadata for a project (name, thumbnail, file count, created/updated timestamps).',
       parameters: {
         type: 'object',
         properties: {
-          project_id: {
-            type: 'string',
-            description: 'The ID of the project to list files from.'
-          }
+          project_id: { type: 'string', description: 'The ID of the project.' }
         },
         required: ['project_id']
       }

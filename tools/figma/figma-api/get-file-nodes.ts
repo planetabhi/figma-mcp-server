@@ -1,30 +1,9 @@
-import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
-const executeFunction = async ({ file_key, node_id }: any) => {
-  const baseUrl = 'https://api.figma.com';
-  const token = getFigmaToken();
-  try {
-    const url = new URL(`${baseUrl}/v1/files/${file_key}/nodes`);
-    if (node_id) {
-      url.searchParams.append('ids', node_id);
-    }
+import { ApiTool, figmaRequest } from "../../../lib/tools.ts";
 
-    const headers = {
-      'X-Figma-Token': token
-    };
-
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json() as any;
-      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) { throw error; }
+const executeFunction = async ({ file_key, ids, version, depth, geometry, plugin_data }: any) => {
+  return figmaRequest(`/v1/files/${file_key}/nodes`, {
+    query: { ids, version, depth, geometry, plugin_data }
+  });
 };
 
 const apiTool: ApiTool = {
@@ -33,20 +12,36 @@ const apiTool: ApiTool = {
     type: 'function',
     function: {
       name: 'get_file_nodes',
-      description: 'Retrieve specific nodes from a Figma file.',
+      description: 'Retrieve specific nodes (and their subtrees) from a Figma file as JSON.',
       parameters: {
         type: 'object',
         properties: {
           file_key: {
             type: 'string',
-            description: 'The key of the Figma file.'
+            description: 'The key of the Figma file (or branch key).'
           },
-          node_id: {
+          ids: {
             type: 'string',
-            description: 'The ID of the node to retrieve.'
+            description: 'Comma-separated list of node IDs to retrieve.'
+          },
+          version: {
+            type: 'string',
+            description: 'A specific version ID to get. Defaults to the current version.'
+          },
+          depth: {
+            type: 'number',
+            description: 'How deep into each node tree to traverse (e.g. 1 = direct children only).'
+          },
+          geometry: {
+            type: 'string',
+            description: 'Set to "paths" to export vector data.'
+          },
+          plugin_data: {
+            type: 'string',
+            description: 'Comma-separated plugin IDs and/or "shared" to include their plugin data.'
           }
         },
-        required: ['file_key']
+        required: ['file_key', 'ids']
       }
     }
   }

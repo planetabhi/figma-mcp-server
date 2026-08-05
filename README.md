@@ -1,128 +1,121 @@
 # Figma MCP Server
-A comprehensive local MCP server for Figma. Connect Figma with the Gemini CLI, Cursor, and Claude Desktop.
+A local MCP server with full Figma REST API coverage. Works with Claude Desktop, Cursor, VS Code, the Gemini CLI, and any MCP client.
 
-![Figma MCP Server Preview](/preview.webp)
+## How it works
+
+The server exposes the Figma REST API as MCP tools. Each endpoint is one tool. Tools are auto-discovered at startup from `tools/figma/`, so adding an endpoint is just adding a file. Every tool is self-describing with a JSON Schema, and required parameters are validated before each call. It runs over stdio by default (how desktop clients spawn it) or over SSE with the `--sse` flag. It ships with a single runtime dependency, the MCP SDK, and requires Bun.
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (>= 1.1.0)
+- [Bun](https://bun.sh/) (>= 1.2). Node is not supported.
 
 ## Install
-Install the server
+
+Bun-native (raw TypeScript, uses `Bun.Glob`), so run it with `bunx`, not `npx`.
 
 ```bash
-git clone https://github.com/planetabhi/figma-mcp-server.git
-cd figma-mcp-server
-bun i
+bunx figma-mcp-server
 ```
 
-### Set tool environment variable
-Create a `.env` file and set the `FIGMA_API_KEY` to your Figma API key.
+Or install it globally:
 
 ```bash
-FIGMA_API_KEY=
+bun add -g figma-mcp-server
 ```
 
-> To generate a new personal access token, log in to your Figma account, then from the top-left menu, head to Settings, click on the security tab, find the Personal access tokens section, and click Generate new token to open the configuration modal where you can set the expiration and scopes before clicking Generate token.
+## Figma API key
 
-### List All Tools
-List descriptions and parameters from all available tools
+Create a personal access token in Figma under Settings > Security > Personal access tokens > Generate new token. Provide it as `FIGMA_API_KEY`, ideally in your client config's `env` block (see below).
 
-```bash
-bun list-tools
-# or
-bun index.ts tools
-```
+## Configure your client
 
-## Run the MCP Server
-
-### Find bun and server path
-
-```bash
-# Find bun path
-which bun
-
-# Get the absolute path of the MCP server
-realpath mcpServer.ts
-```
-
-### Run with Claude Desktop
-
-1. Open Claude Desktop → **Settings** → **Developers** → **Edit Config** and add your server:
+Every client uses the same server. Point `command` at `bunx`, or its absolute path (`which bunx`) if the client cannot find it on `PATH`.
 
 ```json
 {
   "mcpServers": {
-    "figma-mcp-server": {
-      "command": "<absolute_path_to_bun>",
-      "args": ["<absolute_path_to_mcpServer.ts>"]
+    "figma": {
+      "command": "bunx",
+      "args": ["figma-mcp-server"],
+      "env": {
+        "FIGMA_API_KEY": "your_figma_api_key_here"
+      }
     }
   }
 }
 ```
 
-2. Restart Claude Desktop to activate config change.
+Config file locations:
 
-> To try it out in Claude Desktop, first enable the `get_file_nodes` tool from the tools list. Copy a design node link from a Figma file, then paste it into Claude Desktop prompt. It will return the design node data and other information.
+- Claude Desktop: Settings > Developer > Edit Config (`claude_desktop_config.json`)
+- Cursor: `~/.cursor/mcp.json`, or `.cursor/mcp.json` per project
+- Gemini CLI: `~/.gemini/settings.json`
+- VS Code: `.vscode/mcp.json`, using the `servers` key with `"type": "stdio"`
 
+Restart the client after editing its config.
 
-### Run with Gemini CLI
+## Tool coverage
 
-1. Open a new terminal and create the `.gemini` directory (if it doesn't exist)
+Full coverage of the Figma REST API (non-deprecated endpoints). 49 tools.
+
+**Files and nodes**
+- `get_figma_file`, `get_file_nodes`, `render_images`, `get_image_fills`, `get_file_meta`, `get_file_version_history`
+
+**Variables (design tokens)**
+- `list_file_variables`, `get_published_variables`, `modify_variables`
+
+**Components, component sets, styles**
+- `list_components`, `get_published_component_by_key`, `get_team_components`
+- `list_component_sets`, `get_component_set`, `get_team_component_sets`
+- `list_styles_in_file`, `get_published_style`, `get_team_styles`
+
+**Comments and reactions**
+- `list_comments`, `post_comment`, `delete_comment`
+- `get_comment_reactions`, `post_comment_reaction`, `delete_comment_reaction`
+
+**Projects and users**
+- `list_projects_in_team`, `list_files_in_project`, `get_project_meta`, `get_current_user`
+
+**Dev resources**
+- `list_dev_resources`, `create_dev_resources`, `update_dev_resources`, `delete_dev_resource`
+
+**Webhooks**
+- `get_webhooks`, `create_webhook`, `get_webhook`, `update_webhook`, `delete_webhook`, `get_webhook_requests`
+
+**Library analytics**
+- `get_library_component_actions`, `get_library_component_usages`
+- `get_library_style_actions`, `get_library_style_usages`
+- `get_library_variable_actions`, `get_library_variable_usages`
+
+**Organization (Enterprise)**
+- `get_activity_logs`, `get_developer_logs`, `get_ai_usage_daily`
+
+**Embeds and payments**
+- `get_oembed`, `get_payments`
+
+### Plan requirements
+
+Most tools work with any plan's personal access token. These need higher tiers:
+
+- Variables (`list_file_variables`, `get_published_variables`, `modify_variables`): Enterprise organization.
+- Library analytics (`get_library_*`): Organization or Enterprise plan.
+- Activity logs, developer logs, AI usage: Enterprise organization with an admin or plan access token.
+
+## SSE transport
+
+The server runs over stdio by default. To serve over SSE instead:
 
 ```bash
-mkdir -p ~/.gemini
+bunx figma-mcp-server --sse
 ```
 
-2. Create the `settings.json` file
+Default port is `3001`; override with `PORT`.
 
-```bash
-echo '{
-  "mcpServers": {
-    "figma-mcp-server": {
-      "command": "<absolute_path_to_bun>",
-      "args": ["mcpServer.ts"],
-      "cwd": "<absolute_path_to_working_directory>",
-      "env": {
-        "FIGMA_API_KEY": "your_figma_api_key_here"
-      },
-      "trust": true
-    }
-  }
-}' > ~/.gemini/settings.json
-```
+## Troubleshooting
 
-3. Start Gemini CLI
-
-```bash
-export GEMINI_API_KEY="your_gemini_api_key_here"
-npx https://github.com/google-gemini/gemini-cli
-```
-
-- Use `/mcp` to list all tools
-- Use `/mcp desc` to show server and tool descriptions
-- Use `/mcp schema` to show tool parameter schemas
-- Use `/mcp nodesc` to hide descriptions
-
----
-
-### Troubleshooting
-
-- Missing Figma token
-  - Error: missing or invalid `FIGMA_API_KEY`. 
-  - Ensure `.env` exists next to `mcpServer.ts` with `FIGMA_API_KEY=...`.
-- Port already in use (SSE mode)
-  - Run SSE on a custom port: `PORT=3005 bun mcpServer.ts --sse`.
-- Bun not found
-  - Ensure `which bun` returns a path. 
-  - Restart your shell after installing Bun.
-- Using npm instead of Bun
-  - Replace `bun i` → `npm i`
-  - Replace `bun list-tools` → `npx tsx index.ts tools`
-- Manual start not required
-  - Only start manually for SSE or local web endpoint: `bun mcpServer.ts --sse`
-  - Default port is `3001`, override with `PORT=<port>`
-
+- Invalid or missing `FIGMA_API_KEY`: set it in your client config's `env` block.
+- `bunx` not found: use its absolute path from `which bunx`.
+- SSE port in use: run with `PORT=<port>`.
 
 ---
 
