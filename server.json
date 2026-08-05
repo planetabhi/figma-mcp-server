@@ -1,0 +1,30 @@
+{
+  "name": "io.github.planetabhi/figma-mcp-server",
+  "title": "Figma",
+  "description": "A local MCP server with full Figma REST API coverage.",
+  "repository": {
+    "url": "https://github.com/planetabhi/figma-mcp-server",
+    "source": "github"
+  },
+  "version": "3.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "figma-mcp-server",
+      "version": "3.0.1",
+      "runtimeHint": "bunx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "FIGMA_API_KEY",
+          "description": "Figma personal access token",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
