@@ -1,27 +1,9 @@
-import { ApiTool, getFigmaToken } from "../../../lib/tools.ts";
-const executeFunction = async ({ file_key }: any) => {
-  const baseUrl = 'https://api.figma.com';
-  const token = getFigmaToken();
-  try {
-    const url = `${baseUrl}/v1/files/${file_key}/versions`;
+import { ApiTool, figmaRequest } from "../../../lib/tools.ts";
 
-    const headers = {
-      'X-Figma-Token': token
-    };
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json() as any;
-      throw new Error(`Figma API Error: ${errorData.message || response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) { throw error; }
+const executeFunction = async ({ file_key, page_size, before, after }: any) => {
+  return figmaRequest(`/v1/files/${file_key}/versions`, {
+    query: { page_size, before, after }
+  });
 };
 
 const apiTool: ApiTool = {
@@ -30,14 +12,14 @@ const apiTool: ApiTool = {
     type: 'function',
     function: {
       name: 'get_file_version_history',
-      description: 'Retrieve the version history of a specified Figma file.',
+      description: 'Retrieve the paginated version history of a Figma file.',
       parameters: {
         type: 'object',
         properties: {
-          file_key: {
-            type: 'string',
-            description: 'The key of the Figma file for which to retrieve version history.'
-          }
+          file_key: { type: 'string', description: 'The key of the Figma file (or branch key).' },
+          page_size: { type: 'number', description: 'Number of items per page. Defaults to 30, max 50.' },
+          before: { type: 'number', description: 'A version ID to get versions before, for pagination.' },
+          after: { type: 'number', description: 'A version ID to get versions after, for pagination.' }
         },
         required: ['file_key']
       }

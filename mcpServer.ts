@@ -1,7 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
-import dotenv from "dotenv";
-import express from "express";
+import { createServer } from "node:http";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
@@ -13,22 +12,16 @@ import {
     Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 import { discoverTools, type ToolWithDefinition } from "./lib/tools.ts";
+import pkg from "./package.json" with { type: "json" };
 
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, ".env") });
-
+// Bun auto-loads .env from the working directory; no dotenv needed.
 if (!process.env.FIGMA_API_KEY) {
     console.error("Error: FIGMA_API_KEY environment variable is required.");
     process.exit(1);
 }
 
-const SERVER_NAME = process.env.SERVER_NAME || "figma-mcp-server";
-const SERVER_VERSION = process.env.SERVER_VERSION || "0.1.2";
+const SERVER_NAME = process.env.SERVER_NAME || pkg.name;
+const SERVER_VERSION = process.env.SERVER_VERSION || pkg.version;
 const DEFAULT_PORT = 3001;
 
 async function transformTools(tools: ToolWithDefinition[]): Promise<Tool[]> {
@@ -102,58 +95,67 @@ async function run() {
     const transformedTools = await transformTools(tools);
 
     if (isSSE) {
-        const app = express();
         const transports: Record<string, SSEServerTransport> = {};
         const servers: Record<string, Server> = {};
 
-        app.get("/sse", async (_req, res) => {
-            const server = new Server(
-                {
-                    name: SERVER_NAME,
-                    version: SERVER_VERSION,
-                },
-                {
-                    capabilities: {
-                        tools: {},
+        const httpServer = createServer(async (req, res) => {
+            const url = new URL(req.url ?? "/", "http://localhost");
+
+            if (req.method === "GET" && url.pathname === "/sse") {
+                const server = new Server(
+                    {
+                        name: SERVER_NAME,
+                        version: SERVER_VERSION,
                     },
-                }
-            );
-            server.onerror = (error) => console.error("[Error]", error);
-            await setupServerHandlers(server, tools, transformedTools);
+                    {
+                        capabilities: {
+                            tools: {},
+                        },
+                    }
+                );
+                server.onerror = (error) => console.error("[Error]", error);
+                await setupServerHandlers(server, tools, transformedTools);
 
-            const transport = new SSEServerTransport("/messages", res);
-            transports[transport.sessionId] = transport;
-            servers[transport.sessionId] = server;
+                const transport = new SSEServerTransport("/messages", res);
+                transports[transport.sessionId] = transport;
+                servers[transport.sessionId] = server;
 
-            res.on("close", async () => {
-                delete transports[transport.sessionId];
-                await server.close();
-                delete servers[transport.sessionId];
-            });
+                res.on("close", async () => {
+                    delete transports[transport.sessionId];
+                    await server.close();
+                    delete servers[transport.sessionId];
+                });
 
-            await server.connect(transport);
-        });
-
-        app.post("/messages", async (req, res) => {
-            const sessionId = req.query.sessionId;
-
-            if (typeof sessionId !== "string") {
-                res.status(400).send("Invalid or missing sessionId");
+                await server.connect(transport);
                 return;
             }
 
-            const transport = transports[sessionId];
-            const server = servers[sessionId];
+            if (req.method === "POST" && url.pathname === "/messages") {
+                const sessionId = url.searchParams.get("sessionId");
+                if (!sessionId) {
+                    res.statusCode = 400;
+                    res.end("Invalid or missing sessionId");
+                    return;
+                }
 
-            if (transport && server) {
-                await transport.handlePostMessage(req, res);
-            } else {
-                res.status(400).send("No transport/server found for sessionId");
+                const transport = transports[sessionId];
+                const server = servers[sessionId];
+
+                if (transport && server) {
+                    await transport.handlePostMessage(req, res);
+                } else {
+                    res.statusCode = 400;
+                    res.end("No transport/server found for sessionId");
+                }
+                return;
             }
+
+            res.statusCode = 404;
+            res.end("Not found");
         });
 
         const port = process.env.PORT || DEFAULT_PORT;
-        app.listen(port, () => {
+        httpServer.listen(port, () => {
             console.log(`[SSE Server] running on port ${port}`);
             console.log(`[Server] Name: ${SERVER_NAME}`);
             console.log(`[Server] Version: ${SERVER_VERSION}`);

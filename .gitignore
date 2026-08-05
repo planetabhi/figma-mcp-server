@@ -59,3 +59,4 @@ out
 .pnp.*
 .DS_Store
 dist/
+plan.md
