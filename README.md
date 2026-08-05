@@ -11,7 +11,7 @@ The server exposes the Figma REST API as MCP tools. Each endpoint is one tool. T
 
 ## Install
 
-Bun-native (raw TypeScript, uses `Bun.Glob`), so run it with `bunx`, not `npx`.
+Available on npm and the official MCP Registry. Bun-native (raw TypeScript, uses `Bun.Glob`), so run it with `bunx`, not `npx`.
 
 ```bash
 bunx figma-mcp-server
