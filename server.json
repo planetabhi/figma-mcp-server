@@ -1,4 +1,5 @@
 {
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.planetabhi/figma-mcp-server",
   "title": "Figma",
   "description": "A local MCP server with full Figma REST API coverage.",
