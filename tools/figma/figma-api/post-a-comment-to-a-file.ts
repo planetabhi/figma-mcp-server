@@ -1,8 +1,6 @@
 import { ApiTool, figmaRequest } from "../../../lib/tools.ts";
 
 const executeFunction = async ({ file_key, message, client_meta = {} }: any) => {
-  // Figma accepts either a Vector ({x, y}) or a FrameOffset
-  // ({node_id, node_offset: {x, y}}). Transform the flat input accordingly.
   const { node_id, x, y } = client_meta;
   let normalizedClientMeta: Record<string, unknown> | undefined;
   if (node_id != null) {

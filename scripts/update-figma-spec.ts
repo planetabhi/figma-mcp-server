@@ -1,5 +1,3 @@
-// Downloads the latest Figma OpenAPI spec and vendors it under spec/.
-// Run: bun run update-spec
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

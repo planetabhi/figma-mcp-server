@@ -1,4 +1,3 @@
-// Test helpers for offline conformance checks against Figma's vendored OpenAPI spec.
 import { fileURLToPath } from "node:url";
 import { discoverTools, type ToolWithDefinition } from "../lib/tools.ts";
 
@@ -23,8 +22,6 @@ export async function loadTools(): Promise<ToolWithDefinition[]> {
   return discoverTools();
 }
 
-// Build a representative argument object from a tool's own parameter schema so
-// every exposed field (path, query, body) is exercised against the spec.
 export function generateSampleArgs(def: any): Record<string, any> {
   const props = def?.parameters?.properties ?? {};
   const args: Record<string, any> = {};
@@ -50,7 +47,6 @@ function sampleValue(key: string, schema: any): any {
   }
 }
 
-// Run a tool with fetch stubbed and capture the outgoing HTTP request.
 export async function captureRequest(
   tool: ToolWithDefinition,
   args: Record<string, any>
@@ -104,7 +100,6 @@ function templateToRegex(template: string): RegExp {
   return new RegExp("^" + parts.join("/") + "$");
 }
 
-// Match a concrete request path to the most specific spec path template.
 export function matchSpecPath(spec: any, pathname: string): SpecMatch | undefined {
   const candidates: { template: string; item: any; literals: number }[] = [];
   for (const [template, item] of Object.entries<any>(spec.paths ?? {})) {
@@ -133,7 +128,6 @@ function resolveRef(spec: any, node: any): any {
   return current;
 }
 
-// Names of parameters (query or path) allowed by the spec for an operation.
 export function specParams(
   spec: any,
   item: any,
@@ -147,8 +141,6 @@ export function specParams(
   return all.filter((p) => p.in === location).map((p) => p.name);
 }
 
-// Top-level request body property names allowed by the spec, or null when the
-// operation has no JSON body schema (so callers can skip the assertion).
 export function specBodyProps(spec: any, item: any, method: string): string[] | null {
   const op = item[method.toLowerCase()] ?? {};
   const schema = op?.requestBody?.content?.["application/json"]?.schema;

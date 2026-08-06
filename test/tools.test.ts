@@ -1,6 +1,3 @@
-// Offline conformance tests: validates every tool's structure and checks that
-// the request it sends matches Figma's vendored OpenAPI spec (spec/figma-openapi.json).
-// Refresh the spec with `bun run update-spec`.
 import { describe, expect, test } from "bun:test";
 import {
   captureRequest,
