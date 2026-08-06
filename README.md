@@ -11,7 +11,7 @@ Each Figma REST endpoint is exposed as one self-describing MCP tool, auto-discov
 
 ## Install
 
-Available on npm and the official MCP Registry. Normally your MCP client launches it for you (see [Configure your client](#configure-your-client)).
+Available on [npm](https://www.npmjs.com/package/figma-mcp-server) and the official [MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.planetabhi/figma-mcp-server). Normally your MCP client launches it for you (see [Configure your client](#configure-your-client)).
 
 Or install it globally:
 
@@ -46,7 +46,6 @@ Config file locations:
 - Claude Desktop: Settings > Developer > Edit Config (`claude_desktop_config.json`)
 - Cursor: `~/.cursor/mcp.json`, or `.cursor/mcp.json` per project
 - Gemini CLI: `~/.gemini/settings.json`
-- VS Code: `.vscode/mcp.json` (see below)
 
 Restart the client after editing its config.
 
