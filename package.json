@@ -12,8 +12,10 @@
     "list-tools": "bun index.ts tools",
     "start": "bun mcpServer.ts --sse",
     "typecheck": "bun x tsc --noEmit",
+    "test": "bun test test/",
+    "update-spec": "bun scripts/update-figma-spec.ts",
     "pack": "bun pm pack",
-    "prepublishOnly": "bun run typecheck"
+    "prepublishOnly": "bun run typecheck && bun test"
   },
   "files": [
     "mcpServer.ts",
@@ -52,6 +54,7 @@
   "devDependencies": {
     "@types/bun": "^1.3.14",
     "@types/node": "^26.1.2",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "yaml": "^2.9.0"
   }
 }
