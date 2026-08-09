@@ -1,9 +1,7 @@
 #!/usr/bin/env bun
 
-import { createServer } from "node:http";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import {
     CallToolRequestSchema,
     ErrorCode,
@@ -22,7 +20,6 @@ if (!process.env.FIGMA_API_KEY) {
 
 const SERVER_NAME = process.env.SERVER_NAME || pkg.name;
 const SERVER_VERSION = process.env.SERVER_VERSION || pkg.version;
-const DEFAULT_PORT = 3001;
 
 async function transformTools(tools: ToolWithDefinition[]): Promise<Tool[]> {
     return tools
@@ -89,100 +86,30 @@ async function setupServerHandlers(
 }
 
 async function run() {
-    const args = process.argv.slice(2);
-    const isSSE = args.includes("--sse");
     const tools = await discoverTools();
     const transformedTools = await transformTools(tools);
 
-    if (isSSE) {
-        const transports: Record<string, SSEServerTransport> = {};
-        const servers: Record<string, Server> = {};
-
-        const httpServer = createServer(async (req, res) => {
-            const url = new URL(req.url ?? "/", "http://localhost");
-
-            if (req.method === "GET" && url.pathname === "/sse") {
-                const server = new Server(
-                    {
-                        name: SERVER_NAME,
-                        version: SERVER_VERSION,
-                    },
-                    {
-                        capabilities: {
-                            tools: {},
-                        },
-                    }
-                );
-                server.onerror = (error) => console.error("[Error]", error);
-                await setupServerHandlers(server, tools, transformedTools);
-
-                const transport = new SSEServerTransport("/messages", res);
-                transports[transport.sessionId] = transport;
-                servers[transport.sessionId] = server;
-
-                res.on("close", async () => {
-                    delete transports[transport.sessionId];
-                    await server.close();
-                    delete servers[transport.sessionId];
-                });
-
-                await server.connect(transport);
-                return;
-            }
-
-            if (req.method === "POST" && url.pathname === "/messages") {
-                const sessionId = url.searchParams.get("sessionId");
-                if (!sessionId) {
-                    res.statusCode = 400;
-                    res.end("Invalid or missing sessionId");
-                    return;
-                }
-
-                const transport = transports[sessionId];
-                const server = servers[sessionId];
-
-                if (transport && server) {
-                    await transport.handlePostMessage(req, res);
-                } else {
-                    res.statusCode = 400;
-                    res.end("No transport/server found for sessionId");
-                }
-                return;
-            }
-
-            res.statusCode = 404;
-            res.end("Not found");
-        });
-
-        const port = process.env.PORT || DEFAULT_PORT;
-        httpServer.listen(port, () => {
-            console.log(`[SSE Server] running on port ${port}`);
-            console.log(`[Server] Name: ${SERVER_NAME}`);
-            console.log(`[Server] Version: ${SERVER_VERSION}`);
-        });
-    } else {
-        const server = new Server(
-            {
-                name: SERVER_NAME,
-                version: SERVER_VERSION,
+    const server = new Server(
+        {
+            name: SERVER_NAME,
+            version: SERVER_VERSION,
+        },
+        {
+            capabilities: {
+                tools: {},
             },
-            {
-                capabilities: {
-                    tools: {},
-                },
-            }
-        );
-        server.onerror = (error) => console.error("[Error]", error);
-        await setupServerHandlers(server, tools, transformedTools);
+        }
+    );
+    server.onerror = (error) => console.error("[Error]", error);
+    await setupServerHandlers(server, tools, transformedTools);
 
-        process.on("SIGINT", async () => {
-            await server.close();
-            process.exit(0);
-        });
+    process.on("SIGINT", async () => {
+        await server.close();
+        process.exit(0);
+    });
 
-        const transport = new StdioServerTransport();
-        await server.connect(transport);
-    }
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
 }
 
 run().catch(console.error);

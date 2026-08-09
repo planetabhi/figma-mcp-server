@@ -1,0 +1,39 @@
+name: sync-spec
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 1,15 * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun scripts/spec-endpoint-diff.ts snapshot "$RUNNER_TEMP/old-paths.json"
+
+      - run: bun run update-spec
+
+      - run: bun scripts/spec-endpoint-diff.ts diff "$RUNNER_TEMP/old-paths.json" "$RUNNER_TEMP/pr-body.md"
+
+      - run: bun run typecheck && bun test test/
+
+      - uses: peter-evans/create-pull-request@v8
+        with:
+          branch: chore/spec-sync
+          delete-branch: true
+          commit-message: "chore: sync Figma spec"
+          title: "chore: sync Figma spec"
+          body-path: ${{ runner.temp }}/pr-body.md
+          add-paths: spec/figma-openapi.json
