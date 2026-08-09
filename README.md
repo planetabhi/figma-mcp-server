@@ -1,23 +1,13 @@
 # Figma MCP Server
-A local MCP server with full Figma REST API coverage. Works with Claude Desktop, Cursor, VS Code, the Gemini CLI, and any MCP client.
+A local MCP server with full Figma REST API coverage. Works with Claude Desktop, Cursor, VS Code, the Gemini CLI, and any MCP client. Available on [npm](https://www.npmjs.com/package/figma-mcp-server) and the official [MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.planetabhi/figma-mcp-server).
 
 ## How it works
 
-Each Figma REST endpoint is exposed as one self-describing MCP tool, auto-discovered at startup from `tools/figma/`, so adding an endpoint is just adding a file. Required parameters are validated before each call. It runs over stdio by default (how desktop clients spawn it) or over SSE with `--sse`.
+Each Figma REST endpoint is exposed as one self-describing MCP tool, auto-discovered at startup from `tools/figma/`, so adding an endpoint is just adding a file. Required parameters are validated before each call. It runs over stdio.
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (>= 1.2). Node is not supported. The server is Bun-native (uses `Bun.Glob`), so run it with `bunx`, not `npx`.
-
-## Install
-
-Available on [npm](https://www.npmjs.com/package/figma-mcp-server) and the official [MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.planetabhi/figma-mcp-server). Normally your MCP client launches it for you (see [Configure your client](#configure-your-client)).
-
-Or install it globally:
-
-```bash
-bun add -g figma-mcp-server
-```
+Requires [Bun](https://bun.sh/) ≥ 1.2 — it's Bun-native, so launch it with `bunx`, not `npx` (Node isn't supported).
 
 ## Figma API key
 
@@ -93,7 +83,7 @@ Full coverage of the Figma REST API (non-deprecated endpoints), 49 tools across:
 - Organization: activity logs, developer logs, AI usage (Enterprise)
 - Embeds and payments
 
-Run `bun run list-tools` (or check your MCP client's tool list) for the full, always-current list of tool names and parameters.
+Check your MCP client's tool list for the full, always-current list of tool names and parameters.
 
 ### Plan requirements
 
@@ -102,16 +92,6 @@ Most tools work with any plan's personal access token. These need higher tiers:
 - Variables (`list_file_variables`, `get_published_variables`, `modify_variables`): Enterprise organization.
 - Library analytics (`get_library_*`): Organization or Enterprise plan.
 - Activity logs, developer logs, AI usage: Enterprise organization with an admin or plan access token.
-
-## SSE transport
-
-The server runs over stdio by default. To serve over SSE instead:
-
-```bash
-bunx figma-mcp-server --sse
-```
-
-Default port is `3001`; override with `PORT`.
 
 ---
 
