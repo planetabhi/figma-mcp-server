@@ -1,7 +1,7 @@
 {
   "name": "figma-mcp-server",
   "mcpName": "io.github.planetabhi/figma-mcp-server",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "A local MCP server with full Figma REST API coverage.",
   "main": "mcpServer.ts",
   "bin": {
