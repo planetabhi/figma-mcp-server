@@ -1,7 +1,7 @@
 import { ApiTool, figmaRequest } from "../../../lib/tools.ts";
 
 const executeFunction = async ({ team_id }: any) => {
-  return figmaRequest(`/v1/teams/${team_id}/projects`);
+  return figmaRequest(`/v2/teams/${team_id}/folders`);
 };
 
 const apiTool: ApiTool = {
@@ -9,14 +9,14 @@ const apiTool: ApiTool = {
   definition: {
     type: 'function',
     function: {
-      name: 'list_projects_in_team',
-      description: 'List all projects within a specified team on Figma.',
+      name: 'get_team_folders',
+      description: 'Get the top-level folders (previously called projects) within a specified team.',
       parameters: {
         type: 'object',
         properties: {
           team_id: {
             type: 'string',
-            description: 'The ID of the team for which to list projects.'
+            description: 'The ID of the team to list folders from.'
           }
         },
         required: ['team_id']

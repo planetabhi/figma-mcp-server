@@ -7,7 +7,7 @@ Each Figma REST endpoint is exposed as one self-describing MCP tool, auto-discov
 
 ### Prerequisites
 
-Requires [Bun](https://bun.sh/) ≥ 1.2 — it's Bun-native, so launch it with `bunx`, not `npx` (Node isn't supported).
+Requires [Bun](https://bun.sh/) ≥ 1.2. It's Bun-native, so launch it with `bunx`, not `npx` (Node isn't supported).
 
 ## Figma API key
 
@@ -70,13 +70,14 @@ Use `.vscode/mcp.json` (workspace) or your user `mcp.json`, with a `servers` key
 
 ## Tool coverage
 
-Full coverage of the Figma REST API (non-deprecated endpoints), 49 tools across:
+Full coverage of the Figma REST API (non-deprecated endpoints), 50 tools across:
 
 - Files and nodes (files, node trees, image rendering, image fills, metadata, version history)
 - Variables / design tokens (read, published, bulk modify)
 - Components, component sets, and styles (file, published, and team scopes)
 - Comments and reactions
-- Projects and users
+- Folders (top-level folders, subfolders, files, metadata)
+- Users
 - Dev resources
 - Webhooks (v2)
 - Library analytics (component, style, and variable actions and usages)
