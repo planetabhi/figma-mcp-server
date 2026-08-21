@@ -1,6 +1,8 @@
 # Figma MCP Server
 A local MCP server with full Figma REST API coverage. Works with Claude Desktop, Cursor, VS Code, the Gemini CLI, and any MCP client. Available on [npm](https://www.npmjs.com/package/figma-mcp-server) and the official [MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.planetabhi/figma-mcp-server).
 
+[![MCP Trust Score](https://mcptrustchecker.com/registry/figma-mcp-server/badge.svg)](https://mcptrustchecker.com/registry/figma-mcp-server) [![M8ven Score](https://m8ven.ai/badge/mcp/planetabhi-figma-mcp-server-1bgg94)](https://m8ven.ai/mcp/planetabhi-figma-mcp-server-1bgg94)
+
 ## How it works
 
 Each Figma REST endpoint is exposed as one self-describing MCP tool, auto-discovered at startup from `tools/figma/`, so adding an endpoint is just adding a file. Required parameters are validated before each call. It runs over stdio.
