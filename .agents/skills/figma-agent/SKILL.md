@@ -40,6 +40,8 @@ For syncing a whole component and token library to code, read references/design-
 
 For generating documentation, specs, or usage guidelines for a component or pattern, read references/design-docs.md.
 
+For reviewing the built implementation against the design or setting up a visual feedback loop, read references/visual-qa.md.
+
 For reviewing a design and leaving feedback as comments, read references/design-review.md.
 
 ## Scopes to explain failures
