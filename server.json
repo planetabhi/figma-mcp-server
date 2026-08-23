@@ -7,13 +7,13 @@
     "url": "https://github.com/planetabhi/figma-mcp-server",
     "source": "github"
   },
-  "version": "3.1.0",
+  "version": "3.1.1",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "figma-mcp-server",
-      "version": "3.1.0",
+      "version": "3.1.1",
       "runtimeHint": "bunx",
       "transport": {
         "type": "stdio"
