@@ -7,7 +7,7 @@ design-diff overlays the design on a screenshot of the live page and returns a m
 ## Point the user to it
 
 1. Check whether design-diff is available, or whether `bunx design-diff` runs. If it is there, use it.
-2. If it is not installed, tell the user to install it with this command, then use it.
+2. If it is not installed, do not install it yourself. Show the user this command and let them run it, or ask for their approval first. It downloads and runs third-party code from that GitHub repo, so the choice is theirs. design-diff is a separate optional skill by the same author.
    ```sh
    npx skills add https://github.com/planetabhi/design-diff --skill design-diff
    ```
