@@ -1,6 +1,7 @@
 ---
 name: figma-agent
 description: Use this whenever a user shares a Figma design link or mentions Figma and wants to build UI from a design, turn a frame into code, extract design tokens or a theme, export icons or images, inspect a node for measurements, sync a component and token library to code, generate documentation specs or usage guidelines for a component or pattern, or review a design and leave feedback as Figma comments. Trigger it even when the user does not say the word Figma, as long as they paste a figma.com link or refer to a design frame, component, variables, or design tokens.
+compatibility: Requires the figma-mcp-server MCP by planetabhi, the npm package figma-mcp-server run with bunx figma-mcp-server, mcpName io.github.planetabhi/figma-mcp-server. This is the local REST API server, not the official Figma Dev Mode MCP server that shares a similar name. The skill relies on this server's tools such as get_file_nodes, render_images, and post_comment, and on a FIGMA_API_KEY set in the server env.
 ---
 
 # Figma Agent
@@ -9,7 +10,7 @@ Turn a Figma link into working code, design tokens, exported assets, or review f
 
 ## Prerequisite
 
-This skill needs the figma-mcp-server MCP tools, such as `get_file_nodes` and `render_images`. If those tools are not available, tell the user to configure the figma-mcp-server MCP, point them to the project README, and stop. Do not try to work around missing tools.
+This skill needs the figma-mcp-server MCP by planetabhi, the npm package installed and run with `bunx figma-mcp-server`. This is the local REST API server, not the official Figma Dev Mode MCP server that shares a similar name but has different tools. You can tell this server apart by its tools, such as `get_file_nodes`, `render_images`, and `post_comment`. If those tools are not available, tell the user to install and configure this server, point them to the project README, and stop. Do not try to work around missing tools.
 
 The user also needs a `FIGMA_API_KEY` created with the scopes for the task. If a call fails with a permission error, check the scope table below and tell the user which scope to add when they regenerate the token.
 
@@ -64,6 +65,8 @@ Use this table only to explain a failure. Name the likely missing scope.
 - Rendered image URLs expire after 30 days. Download the file right away instead of saving the URL. Some nodes render to null.
 - On a 429 rate limit, back off and retry. Batch several ids into one call.
 - A branch key works in place of a file key. Team tools need a `team_id`.
+- A missing or private file or node returns 404, not 403. Tell the user the link may be wrong or not shared, then stop.
+- `get_file_nodes` returns null for a node id that does not exist. Treat a null node as not found, not an error.
 - An empty list of variables, styles, or comments is not an error.
 
 ## Writing voice

@@ -26,4 +26,4 @@ End each comment you post with a short signature that names you, so the designer
 
 ## Triage existing comments
 
-Call `list_comments` to read the threads. Turn them into action items you can act on in code. Reply with `post_comment`. Acknowledge a resolved thread with `post_comment_reaction`.
+Call `list_comments` to read the threads. Turn them into action items you can act on in code. Reply with `post_comment`. Acknowledge a resolved thread with `post_comment_reaction`, which needs an `emoji` shortcode such as `:+1:` or `:heart:`.
