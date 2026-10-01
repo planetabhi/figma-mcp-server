@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Figma API",
-    "version": "0.42.0",
+    "version": "0.43.0",
     "description": "This is the OpenAPI specification for the [Figma REST API](https://developers.figma.com/docs/rest-api/).\n\nNote: we are releasing the OpenAPI specification as a beta given the large surface area and complexity of the REST API. If you notice any inaccuracies with the specification, please [file an issue](https://github.com/figma/rest-api-spec/issues).",
     "termsOfService": "https://www.figma.com/developer-terms/",
     "contact": {
@@ -3296,7 +3296,7 @@
             ]
           }
         ],
-        "description": "**This API is available to full members of Enterprise orgs with Editor seats.**\n\nThe `POST /v1/files/:file_key/variables` endpoint lets you bulk create, update, and delete variables and variable collections.\n\nThe request body supports the following 4 top-level arrays. Changes from these arrays will be applied in the below order, and within each array, by array order.\n\n- **variableCollections**: For creating, updating, and deleting variable collections\n- **variableModes**: For creating, updating, and deleting modes within variable collections\n  - Each collection can have a maximum of 40 modes\n  - Mode names cannot be longer than 40 characters\n- **variables**: For creating, updating, and deleting variables\n  - Each collection can have a maximum of 5000 variables\n  - Variable names must be unique within a collection and cannot contain certain special characters such as `.{}`\n- **variableModeValues**: For setting a variable value under a specific mode.\n  - When setting aliases, a variable cannot be aliased to itself or form an alias cycle\n\nTemporary ids can be used to reference an object later in the same POST request body. They can be used at create time in the `id` property of variable collections, modes, variables, and in the `initialModeId` property of variable collections. They are scoped to a single request body, and must be unique within the body. The mapping of temporary ids to real ids is returned in the response.\n\nThis endpoint has the following key behaviors:\n\n- The request body must be 4MB or less.\n- Must include an `action` property for collections, modes, and variables to tell the API whether to create, update, or delete the object.\n- When creating a collection, mode, or variable, you can include a temporary `id` that can be referenced in dependent objects in the same request. For example, you can create a new collection with the id `\"my_new_collection\"`. You can then set `variableCollectionId` to `\"my_new_collection\"` in new modes or variables. Temporary ids must be unique in the request body.\n- New collections always come with one mode. You can reference this mode by setting `initialModeId` to a temporary id in the request body. This is useful if you want to set values for variables in the mode in the `variableModeValues` array.\n  - The `tempIdToRealId` array returns a mapping of the temporary ids in the request, to the real ids of the newly created objects.\n- When adding new modes or variables, default variable values will be applied, consistent with what happens in the UI.\n- Everything to be created, updated, and deleted in the request body is treated as one atomic operation. If there is any validation failure, you will get a 400 status code response, and no changes will be persisted.\n- You will not be able to update remote variables or variable collections. You can only update variables in the file where they were originally created.",
+        "description": "**This API is available to full members of Enterprise orgs with Editor seats.**\n\nThe `POST /v1/files/:file_key/variables` endpoint lets you bulk create, update, and delete variables and variable collections.\n\nThe request body supports the following 4 top-level arrays. Changes from these arrays will be applied in the below order, and within each array, by array order.\n\n- **variableCollections**: For creating, updating, and deleting variable collections\n- **variableModes**: For creating, updating, and deleting modes within variable collections\n  - Each collection can have a maximum of 40 modes\n  - Mode names cannot be longer than 40 characters\n- **variables**: For creating, updating, and deleting variables\n  - Each collection can have a maximum of 5000 variables\n  - Variable names must be unique within a collection and cannot contain certain special characters such as `.{}`\n- **variableModeValues**: For setting a variable value under a specific mode.\n  - When setting aliases, a variable cannot be aliased to itself or form an alias cycle\n  - Color variables can use a composed color value with `color` and `opacity` fields. At least one field must be a variable alias.\n\nTemporary ids can be used to reference an object later in the same POST request body. They can be used at create time in the `id` property of variable collections, modes, variables, and in the `initialModeId` property of variable collections. They are scoped to a single request body, and must be unique within the body. The mapping of temporary ids to real ids is returned in the response.\n\nThis endpoint has the following key behaviors:\n\n- The request body must be 4MB or less.\n- Must include an `action` property for collections, modes, and variables to tell the API whether to create, update, or delete the object.\n- When creating a collection, mode, or variable, you can include a temporary `id` that can be referenced in dependent objects in the same request. For example, you can create a new collection with the id `\"my_new_collection\"`. You can then set `variableCollectionId` to `\"my_new_collection\"` in new modes or variables. Temporary ids must be unique in the request body.\n- New collections always come with one mode. You can reference this mode by setting `initialModeId` to a temporary id in the request body. This is useful if you want to set values for variables in the mode in the `variableModeValues` array.\n  - The `tempIdToRealId` array returns a mapping of the temporary ids in the request, to the real ids of the newly created objects.\n- When adding new modes or variables, default variable values will be applied, consistent with what happens in the UI.\n- Everything to be created, updated, and deleted in the request body is treated as one atomic operation. If there is any validation failure, you will get a 400 status code response, and no changes will be persisted.\n- You will not be able to update remote variables or variable collections. You can only update variables in the file where they were originally created.",
         "operationId": "postVariables",
         "parameters": [
           {
@@ -11288,6 +11288,7 @@
           "EFFECT_FLOAT",
           "EFFECT_COLOR",
           "OPACITY",
+          "COLOR_OPACITY",
           "FONT_FAMILY",
           "FONT_STYLE",
           "FONT_WEIGHT",
@@ -11298,7 +11299,7 @@
           "PARAGRAPH_INDENT",
           "FONT_VARIATIONS"
         ],
-        "description": "Scopes allow a variable to be shown or hidden in the variable picker for various fields. This declutters the Figma UI if you have a large number of variables. Variable scopes are currently supported on `FLOAT`, `STRING`, and `COLOR` variables.\n\n`ALL_SCOPES` is a special scope that means that the variable will be shown in the variable picker for all variable fields. If `ALL_SCOPES` is set, no additional scopes can be set.\n\n`ALL_FILLS` is a special scope that means that the variable will be shown in the variable picker for all fill fields. If `ALL_FILLS` is set, no additional fill scopes can be set.\n\nValid scopes for `FLOAT` variables:\n- `ALL_SCOPES`\n- `TEXT_CONTENT`\n- `WIDTH_HEIGHT`\n- `GAP`\n- `STROKE_FLOAT`\n- `EFFECT_FLOAT`\n- `OPACITY`\n- `FONT_WEIGHT`\n- `FONT_SIZE`\n- `LINE_HEIGHT`\n- `LETTER_SPACING`\n- `PARAGRAPH_SPACING`\n- `PARAGRAPH_INDENT`\n\nValid scopes for `STRING` variables:\n- `ALL_SCOPES`\n- `TEXT_CONTENT`\n- `FONT_FAMILY`\n- `FONT_STYLE`\n\nValid scopes for `COLOR` variables:\n- `ALL_SCOPES`\n- `ALL_FILLS`\n- `FRAME_FILL`\n- `SHAPE_FILL`\n- `TEXT_FILL`\n- `STROKE_COLOR`\n- `EFFECT_COLOR`"
+        "description": "Scopes allow a variable to be shown or hidden in the variable picker for various fields. This declutters the Figma UI if you have a large number of variables. Variable scopes are currently supported on `FLOAT`, `STRING`, and `COLOR` variables.\n\n`ALL_SCOPES` is a special scope that means that the variable will be shown in the variable picker for all variable fields. If `ALL_SCOPES` is set, no additional scopes can be set.\n\n`ALL_FILLS` is a special scope that means that the variable will be shown in the variable picker for all fill fields. If `ALL_FILLS` is set, no additional fill scopes can be set.\n\nValid scopes for `FLOAT` variables:\n- `ALL_SCOPES`\n- `TEXT_CONTENT`\n- `WIDTH_HEIGHT`\n- `GAP`\n- `STROKE_FLOAT`\n- `EFFECT_FLOAT`\n- `OPACITY`\n- `COLOR_OPACITY`\n- `FONT_WEIGHT`\n- `FONT_SIZE`\n- `LINE_HEIGHT`\n- `LETTER_SPACING`\n- `PARAGRAPH_SPACING`\n- `PARAGRAPH_INDENT`\n\n`OPACITY` corresponds to layer opacity, while `COLOR_OPACITY` corresponds to the opacity channel of a color.\n\nValid scopes for `STRING` variables:\n- `ALL_SCOPES`\n- `TEXT_CONTENT`\n- `FONT_FAMILY`\n- `FONT_STYLE`\n\nValid scopes for `COLOR` variables:\n- `ALL_SCOPES`\n- `ALL_FILLS`\n- `FRAME_FILL`\n- `SHAPE_FILL`\n- `TEXT_FILL`\n- `STROKE_COLOR`\n- `EFFECT_COLOR`"
       },
       "VariableCodeSyntax": {
         "type": "object",
@@ -11453,6 +11454,9 @@
                 },
                 {
                   "$ref": "#/components/schemas/VariableAlias"
+                },
+                {
+                  "$ref": "#/components/schemas/VariableComposedColor"
                 }
               ]
             }
@@ -11980,7 +11984,59 @@
             "$ref": "#/components/schemas/VariableAlias"
           },
           {
+            "$ref": "#/components/schemas/VariableComposedColor"
+          },
+          {
             "type": "null"
+          }
+        ]
+      },
+      "VariableComposedColor": {
+        "description": "A color with an independently authored opacity.",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "color": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/RGB"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RGBA"
+                  }
+                ]
+              },
+              "opacity": {
+                "$ref": "#/components/schemas/VariableAlias"
+              }
+            },
+            "required": [
+              "color",
+              "opacity"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "color": {
+                "$ref": "#/components/schemas/VariableAlias"
+              },
+              "opacity": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VariableAlias"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "color",
+              "opacity"
+            ]
           }
         ]
       },
