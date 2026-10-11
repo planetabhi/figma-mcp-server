@@ -22,8 +22,8 @@ const apiTool: ApiTool = {
           file_key: { type: 'string', description: 'The key of the Figma file (or branch key) to modify variables in.' },
           variableCollections: { type: 'array', description: 'Create/update/delete variable collections. Each item requires an "action".', items: { type: 'object' } },
           variableModes: { type: 'array', description: 'Create/update/delete modes within variable collections.', items: { type: 'object' } },
-          variables: { type: 'array', description: 'Create/update/delete variables.', items: { type: 'object' } },
-          variableModeValues: { type: 'array', description: 'Set a variable value under a specific mode.', items: { type: 'object' } }
+          variables: { type: 'array', description: 'Create/update/delete variables. COLOR variables support the COLOR_OPACITY scope for the opacity channel of a color.', items: { type: 'object' } },
+          variableModeValues: { type: 'array', description: 'Set a variable value under a specific mode. COLOR variables accept a composed color value ({ color, opacity }) where at least one field is a variable alias.', items: { type: 'object' } }
         },
         required: ['file_key']
       }
