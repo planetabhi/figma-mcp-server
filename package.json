@@ -1,7 +1,7 @@
 {
   "name": "figma-mcp-server",
   "mcpName": "io.github.planetabhi/figma-mcp-server",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "A local MCP server with full Figma REST API coverage.",
   "main": "mcpServer.ts",
   "bin": {
@@ -24,7 +24,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0"
+    "@modelcontextprotocol/sdk": "^1.32.1"
   },
   "engines": {
     "bun": ">=1.2.0"
@@ -54,9 +54,9 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.14",
-    "@types/node": "^26.1.2",
+    "@types/bun": "^1.4.3",
+    "@types/node": "^26.6.5",
     "typescript": "^7.0.2",
-    "yaml": "^2.9.0"
+    "yaml": "^2.9.1"
   }
 }
