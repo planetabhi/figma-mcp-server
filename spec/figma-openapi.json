@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Figma API",
-    "version": "0.44.0",
+    "version": "0.45.0",
     "description": "This is the OpenAPI specification for the [Figma REST API](https://developers.figma.com/docs/rest-api/).\n\nNote: we are releasing the OpenAPI specification as a beta given the large surface area and complexity of the REST API. If you notice any inaccuracies with the specification, please [file an issue](https://github.com/figma/rest-api-spec/issues).",
     "termsOfService": "https://www.figma.com/developer-terms/",
     "contact": {
@@ -8166,7 +8166,8 @@
           "BOOLEAN",
           "INSTANCE_SWAP",
           "TEXT",
-          "VARIANT"
+          "VARIANT",
+          "SLOT"
         ]
       },
       "InstanceSwapPreferredValue": {
@@ -8191,6 +8192,65 @@
           "key"
         ]
       },
+      "SlotSettings": {
+        "type": "object",
+        "description": "Slot-specific configuration for a SLOT component property.",
+        "properties": {
+          "stretchChildOnInsert": {
+            "type": "boolean",
+            "description": "Whether layers inserted into the slot fill its counter axis."
+          },
+          "displayEmptyByDefault": {
+            "type": "boolean",
+            "description": "Whether an empty slot is shown by default."
+          },
+          "minChildren": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Minimum number of children allowed in the slot. null means no minimum."
+          },
+          "maxChildren": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Maximum number of children allowed in the slot. null means no maximum."
+          },
+          "allowPreferredValuesOnly": {
+            "type": "boolean",
+            "description": "Whether slot contents are limited to preferred values."
+          }
+        }
+      },
+      "SlotContentId": {
+        "type": "object",
+        "description": "Identifier for the content of a slot component property.",
+        "properties": {
+          "guid": {
+            "type": "object",
+            "description": "Identifier for the slot content.",
+            "properties": {
+              "sessionID": {
+                "type": "integer"
+              },
+              "localID": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "sessionID",
+              "localID"
+            ]
+          }
+        },
+        "required": [
+          "guid"
+        ]
+      },
       "ComponentPropertyDefinition": {
         "type": "object",
         "description": "A property of a component.",
@@ -8206,6 +8266,9 @@
               },
               {
                 "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/SlotContentId"
               }
             ],
             "description": "Initial value of this property for instances."
@@ -8222,7 +8285,11 @@
             "items": {
               "$ref": "#/components/schemas/InstanceSwapPreferredValue"
             },
-            "description": "Preferred values for this property. Only applicable if type is `INSTANCE_SWAP`."
+            "description": "Preferred values for this property. Only applicable if type is `INSTANCE_SWAP` or `SLOT`."
+          },
+          "slotSettings": {
+            "$ref": "#/components/schemas/SlotSettings",
+            "description": "Settings for a SLOT property."
           }
         },
         "required": [
@@ -8245,6 +8312,9 @@
               },
               {
                 "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/SlotContentId"
               }
             ],
             "description": "Value of the property for this component instance."
@@ -8254,7 +8324,7 @@
             "items": {
               "$ref": "#/components/schemas/InstanceSwapPreferredValue"
             },
-            "description": "Preferred values for this property. Only applicable if type is `INSTANCE_SWAP`."
+            "description": "Preferred values for this property. Only applicable if type is `INSTANCE_SWAP` or `SLOT`."
           },
           "boundVariables": {
             "type": "object",
