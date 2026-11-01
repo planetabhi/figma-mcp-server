@@ -72,13 +72,14 @@ Use `.vscode/mcp.json` (workspace) or your user `mcp.json`, with a `servers` key
 
 ## Tool coverage
 
-Full coverage of the Figma REST API (non-deprecated endpoints), 50 tools across:
+Full coverage of the Figma REST API (non-deprecated endpoints), 55 tools across:
 
-- Files and nodes (files, node trees, image rendering, image fills, metadata, version history)
+- Files and nodes (files, node trees, image rendering, image fills, metadata, version history, duplicate)
 - Variables / design tokens (read, published, bulk modify)
 - Components, component sets, and styles (file, published, and team scopes)
 - Comments and reactions
-- Folders (top-level folders, subfolders, files, metadata)
+- Teams (get, create, invite members)
+- Folders (top-level folders, subfolders, files, metadata, create)
 - Users
 - Dev resources
 - Webhooks (v2)
@@ -95,6 +96,7 @@ Most tools work with any plan's personal access token. These need higher tiers:
 - Variables (`list_file_variables`, `get_published_variables`, `modify_variables`): Enterprise organization.
 - Library analytics (`get_library_*`): Organization or Enterprise plan.
 - Activity logs, developer logs, AI usage: Enterprise organization with an admin or plan access token.
+- File duplication, team and folder creation, and team invites (`duplicate_file`, `create_team`, `create_folder`, `invite_team_members`): Enterprise plan via a private OAuth app.
 
 ---
 
