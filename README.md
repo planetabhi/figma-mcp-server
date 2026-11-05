@@ -1,23 +1,24 @@
 # Figma MCP Server
-A local MCP server with full Figma REST API coverage. Works with Claude Desktop, Cursor, VS Code, the Gemini CLI, and any MCP client. Available on [npm](https://www.npmjs.com/package/figma-mcp-server) and the official [MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.planetabhi/figma-mcp-server).
+
+A single call leaves your editor and returns with a design laid open. This is a local server that carries the whole of the Figma REST API, every endpoint within reach and none withheld. It speaks with Claude Desktop, Cursor, VS Code, the Gemini CLI, and any client that speaks MCP. You will find it on [npm](https://www.npmjs.com/package/figma-mcp-server) and in the official [MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.planetabhi/figma-mcp-server), waiting to be called.
 
 ![NPM Downloads](https://img.shields.io/npm/d18m/figma-mcp-server)
 
 ## How it works
 
-Each Figma REST endpoint is exposed as one self-describing MCP tool, auto-discovered at startup from `tools/figma/`, so adding an endpoint is just adding a file. Required parameters are validated before each call. It runs over stdio.
+Every endpoint of the Figma REST API stands here as a single self-describing tool, and each one says plainly what it needs. At startup the server walks the `tools/figma/` directory and gathers them, so to teach it a new endpoint you lay down one new file and nothing more. Before any call goes out its required parameters are weighed, and the unfinished request is turned back at the threshold. It speaks over stdio, quietly, one message at a time.
 
 ### Prerequisites
 
-Requires [Bun](https://bun.sh/) ≥ 1.2. It's Bun-native, so launch it with `bunx`, not `npx` (Node isn't supported).
+This server is grown from [Bun](https://bun.sh/), and it asks for version 1.2 or newer. Being Bun-native, it answers to `bunx` and not to `npx`, for Node cannot carry it.
 
 ## Figma API key
 
-Create a personal access token in Figma under Settings > Security > Personal access tokens > Generate new token. Provide it as `FIGMA_API_KEY`, ideally in your client config's `env` block (see below).
+One key opens the whole door. Create a personal access token in Figma under Settings > Security > Personal access tokens > Generate new token, then give it to the server as `FIGMA_API_KEY`, set within your client config's `env` block as shown below.
 
 ## Configure your client
 
-Every client uses the same server. Point `command` at `bunx`, or its absolute path (`which bunx`) if the client cannot find it on `PATH`.
+Many clients, and one server beneath them all. Point `command` at `bunx`, or at its absolute path from `which bunx` when the client cannot find it on your `PATH`.
 
 ```json
 {
@@ -33,17 +34,17 @@ Every client uses the same server. Point `command` at `bunx`, or its absolute pa
 }
 ```
 
-Config file locations:
+Each client keeps its config in its own place.
 
 - Claude Desktop: Settings > Developer > Edit Config (`claude_desktop_config.json`)
 - Cursor: `~/.cursor/mcp.json`, or `.cursor/mcp.json` per project
 - Gemini CLI: `~/.gemini/settings.json`
 
-Restart the client after editing its config.
+Once the config is written, restart the client so the change takes hold.
 
 ### VS Code
 
-Use `.vscode/mcp.json` (workspace) or your user `mcp.json`, with a `servers` key. Instead of hardcoding the token, define an input so VS Code prompts for it securely:
+Use `.vscode/mcp.json` for a workspace, or your user `mcp.json`, each holding a `servers` key. Rather than carve the token into the file, name an input and let VS Code ask for it, so the secret is spoken once and then kept safe.
 
 ```json
 {
@@ -72,7 +73,7 @@ Use `.vscode/mcp.json` (workspace) or your user `mcp.json`, with a `servers` key
 
 ## Tool coverage
 
-Full coverage of the Figma REST API (non-deprecated endpoints), 55 tools across:
+The whole of the Figma REST API is here, every endpoint that still stands, fifty-five tools in all, gathered across these domains.
 
 - Files and nodes (files, node trees, image rendering, image fills, metadata, version history, duplicate)
 - Variables / design tokens (read, published, bulk modify)
@@ -87,16 +88,20 @@ Full coverage of the Figma REST API (non-deprecated endpoints), 55 tools across:
 - Organization: activity logs, developer logs, AI usage (Enterprise)
 - Embeds and payments
 
-Check your MCP client's tool list for the full, always-current list of tool names and parameters.
+For the full and ever-current roll of tool names and their parameters, look to your MCP client's own list.
 
 ### Plan requirements
 
-Most tools work with any plan's personal access token. These need higher tiers:
+Most tools open to any plan's personal access token. A few ask for more.
 
 - Variables (`list_file_variables`, `get_published_variables`, `modify_variables`): Enterprise organization.
 - Library analytics (`get_library_*`): Organization or Enterprise plan.
 - Activity logs, developer logs, AI usage: Enterprise organization with an admin or plan access token.
 - File duplication, team and folder creation, and team invites (`duplicate_file`, `create_team`, `create_folder`, `invite_team_members`): Enterprise plan via a private OAuth app.
+
+## Kept in sync
+
+Figma's API does not stand still, and neither does this server. Twice each month, on the first day and the fifteenth, a workflow wakes of its own accord, reaches out for the newest Figma specification, and sets it beside the one already held, marking every endpoint that has arrived, changed, or departed. It runs the type checks and the tests before it trusts the change, and when all of it holds it opens a pull request for a human to read and welcome in. You may also call it by hand whenever the need arises. The work lives in [.github/workflows/sync-spec.yml](.github/workflows/sync-spec.yml), and the spec it tends is kept in `spec/figma-openapi.json`.
 
 ---
 
