@@ -60,3 +60,5 @@ out
 .DS_Store
 dist/
 plan.md
+.agents/
+skills-lock.json
